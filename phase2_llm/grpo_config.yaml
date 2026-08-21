@@ -1,0 +1,89 @@
+# Phase 2 Stage B: GRPO fine-tuning config (see phase2_llm/train_grpo.py).
+#
+# One file, three consumers:
+#   - `train_grpo.py --mode dry-run`   uses model/env/grpo/rollout/train (fully
+#     runnable offline with the mock backend -- no GPU, no verl needed),
+#   - `train_grpo.py --mode make-dataset` uses env/grpo/data to emit the verl
+#     RL-dataset parquet (needs pandas+pyarrow -> run in .venv-grpo),
+#   - `train_grpo.py --mode verl`      additionally maps the `verl:` section
+#     onto hydra overrides for `python -m verl.trainer.main_ppo`.
+
+model:
+  # TODO(user): set the real HF model id or local checkpoint path of the
+  # Qwen model to fine-tune (referred to as "Qwen 3.5" in the project plan;
+  # nothing in this repo hardcodes a size/variant -- pick what fits the GPUs).
+  name_or_path: "Qwen/Qwen3.5-CHANGE_ME"
+
+env:
+  # Read-only reuse of the Phase 0/1 economics (never written to).
+  params_config: "configs/poc.yaml"
+  sigma_u: 0.1        # null -> keep the config's value; the paper sweeps {0.1, 100}
+  xi: null
+  periods: 32         # episode length (plan: ~20-64 periods per rollout)
+
+grpo:
+  group_size: 8            # episodes per GRPO group (verl: actor_rollout_ref.rollout.n)
+  groups_per_step: 4       # groups sampled per training step (dry-run) /
+                           # dataset rows per step (verl: data.train_batch_size)
+  advantage_mode: episode  # "episode" (recommended, = verl GRPO) or "per_turn"
+                           # (experimental; see phase2_llm/reward.py docstring)
+  gamma: 1.0               # discount inside the episode return; the paper's
+                           # speculators use rho=0.95 -- worth an ablation
+  eps: 1.0e-6              # GRPO normalization epsilon (verl default)
+  matched_shocks: true     # group members share the (v_t, u_t) path (CRN); see
+                           # grpo_env_adapter.py docstring
+  train_seats: [0, 1]      # which seats' trajectories enter training in the
+                           # dry-run records (both are identically distributed)
+
+rollout:
+  backend: mock            # "mock" (offline) or "openai" (vLLM server)
+  base_url: null           # e.g. http://<vllm-node>:8000/v1  (or $OPENAI_BASE_URL)
+  temperature: 0.7
+  history_len: 10          # Stage A prompt rolling-history length
+  max_retries: 1           # Stage A retry-once policy
+  fallback: middle         # Stage A documented fallback
+  mock_mode: random        # mock only: random | fixed | target_nash | target_cartel
+  malformed_rate: 0.05     # mock only: exercise the retry/fallback path
+
+train:
+  steps: 2                 # dry-run steps to simulate
+  base_seed: 1000          # shock seeds: base_seed + step*groups_per_step + k
+  out_dir: "results/phase2_llm/grpo"
+
+data:
+  # --mode make-dataset: verl RL dataset (one row per episode spec; verl
+  # replicates each row rollout.n times with a shared uid = the GRPO group).
+  n_rows_train: 512
+  n_rows_val: 32
+  out_train: "results/phase2_llm/grpo/train.parquet"
+  out_val: "results/phase2_llm/grpo/val.parquet"
+
+verl:
+  # Hydra overrides for `python -m verl.trainer.main_ppo` (verl 0.8.0
+  # namespace, trainer/config/ppo_trainer.yaml). --mode verl assembles these
+  # into a command line; edit/extend freely -- keys here are passed through.
+  overrides:
+    algorithm.adv_estimator: grpo
+    algorithm.norm_adv_by_std_in_grpo: true
+    data.train_files: "results/phase2_llm/grpo/train.parquet"
+    data.val_files: "results/phase2_llm/grpo/val.parquet"
+    data.train_batch_size: 32          # dataset rows per step (= groups per step)
+    data.max_prompt_length: 1024
+    data.max_response_length: 8192     # whole multi-turn episode lives in the response
+    data.return_raw_chat: true
+    actor_rollout_ref.model.path: "Qwen/Qwen3.5-CHANGE_ME"   # TODO(user): keep in sync with model.name_or_path
+    actor_rollout_ref.rollout.name: vllm
+    actor_rollout_ref.rollout.mode: async        # agent-loop rollouts require the async server
+    actor_rollout_ref.rollout.n: 8               # = grpo.group_size
+    actor_rollout_ref.rollout.multi_turn.enable: true
+    actor_rollout_ref.rollout.agent.default_agent_loop: market_speculator
+    actor_rollout_ref.rollout.agent.agent_loop_config_path: "phase2_llm/agent_loop_config.yaml"
+    actor_rollout_ref.actor.use_kl_loss: true    # standard GRPO regularization
+    actor_rollout_ref.actor.kl_loss_coef: 0.001
+    actor_rollout_ref.actor.optim.lr: 1.0e-6
+    trainer.total_epochs: 1
+    trainer.n_gpus_per_node: 4                   # TODO(user): match the SLURM allocation
+    trainer.nnodes: 1                            # TODO(user): match the SLURM allocation
+    trainer.logger: "['console']"
+    trainer.project_name: ai-trading-collusion
+    trainer.experiment_name: grpo-stage-b

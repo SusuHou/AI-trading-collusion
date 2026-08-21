@@ -1,0 +1,28 @@
+# Exact section-4.2 baseline parameters (docs/paper_spec.md notation table).
+# Full-scale settings: run to true convergence (1M-period stable streak).
+# Nsim = 1000 sessions per cell = SLURM array of 100 tasks x batch 10
+# (see phase1_qlearning/slurm/run_experiment.sbatch).
+params:
+  I: 2
+  vbar: 1.0
+  sigma_v: 1.0
+  sigma_u: 0.1        # baseline low-noise regime; override with --sigma-u 100
+  xi: 500.0
+  theta: 0.1          # fixed universal constant, never swept
+  rho: 0.95
+  alpha: 0.01         # Q-learning rate (eq 2.4)
+  beta: 5.0e-7        # exploration decay (eq 4.3), paper baseline
+  iota: 0.1
+  nv: 10
+  nx: 15
+  np: 31
+  Tm: 10000
+
+run:
+  batch: 10           # sessions per process
+  max_periods: 0      # 0 = no cap; run until every session converges
+  conv_streak: 1000000  # paper's convergence criterion (page 26)
+  eval_periods: 100000  # measurement window T after convergence (OA section 4.1)
+  chunk_size: 20000
+  freeze_on_convergence: true
+  mm_init: nash

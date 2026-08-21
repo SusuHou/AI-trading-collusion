@@ -1,0 +1,10 @@
+.venv/
+.venv310/
+__pycache__/
+*.pyc
+results/
+logs/
+.pytest_cache/
+.venv-grpo/
+pytest-cache-files-*/
+~$*.docx

@@ -1,0 +1,53 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "POC session (sigma_u=0.1)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "phase1_qlearning.run_session",
+            "args": [
+                "--config", "configs/poc.yaml",
+                "--sigma-u", "0.1",
+                "--seed", "11",
+                "--out", "results/vscode_run.npz"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "POC session (sigma_u=100, high noise)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "phase1_qlearning.run_session",
+            "args": [
+                "--config", "configs/poc.yaml",
+                "--sigma-u", "100",
+                "--seed", "12",
+                "--out", "results/vscode_run_su100.npz"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Classify mechanism (last VS Code run)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "phase1_qlearning.classify_mechanism",
+            "args": ["results/vscode_run.npz"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Current file",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        }
+    ]
+}

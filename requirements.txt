@@ -1,0 +1,6 @@
+numpy>=2.0
+scipy>=1.14
+matplotlib>=3.9
+PyYAML>=6.0
+pytest>=8.0
+requests>=2.31   # phase2_llm: OpenAI-compatible chat-completions client

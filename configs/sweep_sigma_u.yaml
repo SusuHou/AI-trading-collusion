@@ -1,0 +1,29 @@
+# Fig. 2 sweep: sigma_u over a log grid (log10 sigma_u = -5..5), baseline
+# I = 2, xi = 500, paper-exact learning hyperparameters and convergence
+# criterion. 11 cells x 100 tasks (batch 10) = Nsim 1000 sessions/cell.
+params:
+  I: 2
+  vbar: 1.0
+  sigma_v: 1.0
+  xi: 500.0
+  theta: 0.1
+  rho: 0.95
+  alpha: 0.01
+  beta: 5.0e-7
+  iota: 0.1
+  nv: 10
+  nx: 15
+  np: 31
+  Tm: 10000
+
+sweep:
+  sigma_u: [1.0e-5, 1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1, 1.0, 1.0e+1, 1.0e+2, 1.0e+3, 1.0e+4, 1.0e+5]
+
+run:
+  batch: 10
+  max_periods: 0        # run to true convergence
+  conv_streak: 1000000
+  eval_periods: 100000
+  chunk_size: 20000
+  freeze_on_convergence: true
+  mm_init: nash

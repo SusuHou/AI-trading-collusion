@@ -1,0 +1,34 @@
+# Laptop proof-of-concept: identical economics to baseline.yaml, but with a
+# 2M-period cap and a faster exploration decay so that the
+# explore->exploit lifecycle completes within the cap.
+#
+# JUDGMENT CALL (documented in README): the paper's beta = 5e-7 needs tens of
+# millions of periods before exploration winds down (eps(v) = exp(-beta n(v)),
+# n(v) ~ t/nv). At a 2M-period cap we scale beta to 4e-5 so that eps < 0.05
+# by t ~ 0.75M and the final ~1M periods are mostly exploitation. The paper
+# reports robustness to alpha/beta within a reasonable range (section 4.2 /
+# Online Appendix 4.12). The convergence streak is also reduced 1M -> 100k.
+params:
+  I: 2
+  vbar: 1.0
+  sigma_v: 1.0
+  sigma_u: 0.1        # override with --sigma-u 100 for the high-noise regime
+  xi: 500.0
+  theta: 0.1
+  rho: 0.95
+  alpha: 0.01
+  beta: 4.0e-5        # POC-scaled exploration decay (paper: 5e-7)
+  iota: 0.1
+  nv: 10
+  nx: 15
+  np: 31
+  Tm: 10000
+
+run:
+  batch: 40           # 40 independent sessions vectorized in one process
+  max_periods: 2000000
+  conv_streak: 100000 # POC-scaled (paper: 1,000,000)
+  eval_periods: 100000  # paper's measurement window T (OA section 4.1)
+  chunk_size: 20000
+  freeze_on_convergence: true
+  mm_init: nash

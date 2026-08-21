@@ -1,0 +1,32 @@
+# Phase 2 Stage B (GRPO fine-tuning) dependencies -- kept OUT of
+# requirements.txt on purpose: verl pulls torch/ray/transformers/datasets/
+# peft/wandb and pins numpy<2, which must not contaminate the Phase 0/1/2A
+# `.venv` (Python 3.14) or `.venv310` (numba). Use a dedicated venv, same
+# pattern as the numba work's .venv310 (README "Phase 2, Stage B"):
+#
+#   local (Windows, no GPU -- dry-run/tests/dataset generation only):
+#     "C:\Program Files\Python310\python.exe" -m venv .venv-grpo
+#     .venv-grpo/Scripts/python -m pip install -r requirements-grpo.txt
+#
+#   cluster (Linux + GPU -- actual training): same, plus vllm (below).
+#
+# Verified in this repo's dev environment: verl 0.8.0 installs and imports
+# cleanly on Python 3.10/Windows/CPU (torch 2.13 CPU, ray 2.56).
+verl>=0.8.0
+# verl 0.8.0's pip metadata misses these transitive imports of its
+# agent-loop/rollout modules (found empirically importing
+# verl.experimental.agent_loop on a clean venv):
+cachetools
+uvicorn
+fastapi
+# The Phase 0/1 core deps (env/, metrics) -- verl already pulls numpy/pyyaml,
+# these make the pin explicit:
+scipy>=1.10
+matplotlib>=3.7
+PyYAML>=6.0
+pytest>=8.0
+requests>=2.31
+
+# Cluster-only (NO Windows wheels -- do not try to install locally):
+# vllm>=0.8          # rollout server; verl spawns it for training, and
+#                    # launch_vllm.sbatch uses `vllm serve` for evaluation

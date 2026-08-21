@@ -1,0 +1,5739 @@
+=== OA PAGE 1 ===
+Internet Appendix for “AI-Powered Trading,
+Algorithmic Collusion, and Price Efficiency”
+Winston Wei Dou
+Itay Goldstein
+Yan Ji
+Abstract
+This appendix provides supplemental materials for the paper titled “AI-Powered Trading,
+Algorithmic Collusion, and Price Efficiency” (Dou, Goldstein and Ji, 2024). Section 2 presents
+additional explanations for the model and sketches proofs for the propositions and lemmas.
+Section 3 provides detailed heuristic justifications and intuitions for AI equilibria. Section 4
+provides supplemental material for the simulation results.
+Keywords: Reinforcement learning, AI collusion, Homogenization, Experience-based and
+self-confirming equilibrium, Asymmetric information, Price informativeness, Market liquidity.
+(JEL Classification: D43, G10, G14, L13)
+1
+
+
+=== OA PAGE 2 ===
+Contents
+1
+Further Literature Background
+3
+2
+Model and Proofs
+4
+2.1
+More Explanations on the Theoretical Benchmark . . . . . . . . . . . . . . . . . . . .
+4
+2.2
+Proof of Lemma 1 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+11
+2.3
+Proof of Proposition 3.1
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+11
+2.4
+Proof of Proposition 3.2
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+19
+2.5
+Proof of Proposition 3.3
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+22
+2.6
+Proof of Proposition 3.4
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+23
+3
+Heuristic Justifications and Intuitions for AI Equilibria
+28
+3.1
+Significant Presence of Information-Insensitive Investors (i.e., Large ξ) . . . . . . . .
+29
+3.1.1
+Low Noise Trading Risk σu with Large ξ . . . . . . . . . . . . . . . . . . . . .
+30
+3.1.2
+High Noise Trading Risk σu with Large ξ . . . . . . . . . . . . . . . . . . . . .
+44
+3.2
+Little Presence of Information-Insensitive Investors (i.e., Small ξ) . . . . . . . . . . .
+48
+4
+Supplementary Simulation Results
+51
+4.1
+Measures in Simulation Experiments . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+51
+4.2
+Testing If Outcomes Form An Experience-Based Equilibrium
+. . . . . . . . . . . . .
+53
+4.3
+Discussions of Price-Trigger Strategies of Informed AI Speculators . . . . . . . . . .
+58
+4.4
+Distribution of IRFs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+61
+4.5
+Identifying Collusion Mechanisms Through IRFs
+. . . . . . . . . . . . . . . . . . . .
+62
+4.6
+Robustness of the U-shaped Relationship . . . . . . . . . . . . . . . . . . . . . . . . .
+62
+4.7
+Trading Strategy of Informed AI Speculators . . . . . . . . . . . . . . . . . . . . . . .
+62
+4.8
+Impacts of Noise Trading Risk
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+64
+4.9
+Environments with Efficient Prices . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+65
+4.10 Computing Q-loss . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+67
+4.11 Q-Learning Market Maker . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+69
+4.12 Hyperparameters . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+70
+4.13 Two-Tier Meta Q-Learning Algorithms
+. . . . . . . . . . . . . . . . . . . . . . . . . .
+73
+2
+
+
+=== OA PAGE 3 ===
+1
+Further Literature Background
+Our paper contributes to the growing literature on algorithmic collusion without explicit agree-
+ments, communication, or coded intent by introducing a novel mechanism, AI collusion through
+over-pruning bias in learning, and providing a comprehensive analysis of the theoretical bench-
+marks for different types of AI collusion and their underlying algorithmic mechanisms. Addition-
+ally, we examine which mechanism dominates under various market environments. Unlike our
+paper, which examines dynamically sophisticated Q-learning with endogenous state variables,
+earlier studies primarily focus on stateless Q-learning or simpler multi-armed bandit algorithms.
+Waltman and Kaymak (2008) show that even stateless Q-learning algorithms can sustain algo-
+rithmic collusion, provided the forgetting rate is high and the relative gains from collusion are
+substantial. More recently, Dolgopolov (2024) extended these results. However, their findings
+rely on the Boltzmann exploration scheme. When exploration follows a fixed-probability rule,
+such as the simple ε-greedy scheme used in this paper, their conclusions no longer hold. This
+distinction highlights that their algorithmic collusion mechanism is fundamentally different from
+ours, as it neither relies on price-trigger strategies nor stems from over-pruning bias in learning.
+Additionally, unlike this paper, some studies adopt a Markov perfect equilibrium framework. For
+example, Klein (2021) simulates a simplified sequential pricing duopoly where firms set prices
+alternately, focusing on Markov perfect equilibrium, similar to Brown and MacKay (2023), rather
+than simultaneous pricing, as examined in many other studies. While Klein (2021) also shows that
+Q-learning algorithms can coordinate on supra-competitive prices, its framework and underlying
+algorithmic mechanism are fundamentally different from ours by design.
+In a contemporaneous study, Banchio and Mantegazza (2024) introduce a novel algorithmic
+collusion mechanism in stateless Q-learning, termed spontaneous coupling. This mechanism arises
+endogenously from statistical linkages between Q-learning algorithms’ price estimates, leading
+to self-reinforcing cycles where firms sustain supra-competitive prices on average. Simulations
+confirm that spontaneous coupling can sustain price-fixing and market division. Importantly,
+learning rate asymmetries reinforce collusion, while greater noise disrupts it. This contrasts
+with the algorithmic collusion mechanisms highlighted in this paper, which operate through
+fundamentally different channels. Building on a similar stateless framework, Hansen, Misra and
+Pai (2021) show that duopolies using autonomous but dynamically unsophisticated reinforcement
+learning algorithms — specifically, upper confidence bound algorithms, a type of multi-armed
+bandit — can also sustain supra-competitive prices over time. In their setting, algorithms designed
+to learn demand through pricing experiments may misinterpret price sensitivity by failing to
+account for competitors’ pricing behavior. This leads them to systematically overestimate their
+own price sensitivity. When firms engage in similar pricing experiments, their pricing decisions
+become correlated, further reinforcing supra-competitive pricing outcomes. A key difference
+between this mechanism and that in Banchio and Mantegazza (2024) is the source of correlation.
+In Hansen, Misra and Pai (2021), it arises through the timing of experimentation, while in Banchio
+3
+
+
+=== OA PAGE 4 ===
+and Mantegazza (2024), it stems from statistical coupling in price estimates generated under fully
+random experimentation. The mechanism in Hansen, Misra and Pai (2021) is fundamentally
+different from ours, because in stateless reinforcement learning, AI collusion cannot be sustained
+through price-trigger strategies, which require tracing past prices as state variables; additionally,
+greater noise strengthens AI collusion in our setting due to over-pruning bias in learning, whereas
+in Hansen, Misra and Pai (2021), greater noise weakens AI collusion. Lambin (2024) challenges
+Hansen, Misra and Pai (2021) by arguing that simultaneous exploration and slow learning,
+rather than price sensitivity overestimation, are the true drivers of correlated pricing and AI
+collusion. However, standard multi-agent reinforcement learning frameworks do not inherently
+require simultaneous moves in exploration, rendering Lambin (2024)’ argument irrelevant for
+our proposed algorithmic mechanisms underlying AI collusion. Along similar lines, Abada and
+Lambin (2023) argue that AI collusion can arise from insufficient learning, particularly due to
+insufficient exploration. When reinforcement learning algorithms fail to sufficiently experiment
+with alternative pricing strategies, they may converge to stable outcomes that closely resemble
+collusive equilibria. However, Asker, Fershtman and Pakes (2024) show that while increasing
+exploration can reduce collusive tendencies, it does not eliminate algorithmic collusion. Expanding
+on this insight, a central contribution of this paper is to identify a novel mechanism underlying
+AI collusion: over-pruning bias in learning. This bias systematically and prematurely eliminates
+aggressive strategies from the set of potential optimal actions, thereby distorting the learning
+process. Its root cause lies in the asymmetric effect of exploitation, where adverse and beneficial
+shocks influence learning in fundamentally different ways. Exploitation reinforces strategies
+that appear successful based on past experience, while discouraging the reconsideration of those
+previously rated poorly due to past performance. As a result, reinforcement learning algorithms
+behave as if they are risk-averse to randomness in rewards. Since aggressive trading strategies are
+more vulnerable to adverse shocks from noise trading flows, they are disproportionately penalized
+and pruned prematurely from the learning path, reinforcing the over-pruning bias. This bias, in
+turn, embeds an implicit form of risk aversion into the algorithm’s behavior, ultimately giving rise
+to AI collusion.
+2
+Model and Proofs
+2.1
+More Explanations on the Theoretical Benchmark
+Further Explanations on the Model Setup.
+Analogous to Kyle and Xiong (2001), the demand
+curve (3.2) in the main text can be justified by a rational portfolio choice made by the information-
+insensitive investor under certain assumptions. These assumptions are summarized in Lemma 1
+and the proof follows.
+Lemma 1 (Demand Curve). If the information-insensitive investor possesses exponential utility with an
+4
+
+
+=== OA PAGE 5 ===
+absolute risk aversion coefficient of ϵ, then the demand curve has the functional form of (3.2) in the main
+text, where the slope ξ is given by 1/(ϵσ2
+v).
+Proof. The information-insensitive investor solves the following portfolio optimization problem
+for a given pt:
+max
+z
+E
+h
+−e−ϵ(vt−pt)z/ϵ
+i
+.
+(IA.2.1)
+Because vt −pt is distributed as N(v −pt, σ2
+v), the first-order condition with respect to z is
+0 =
+h
+(v −pt) −ϵzσ2
+v
+i
+e−ϵz(v−pt)+(ϵz)2σ2v/2.
+(IA.2.2)
+Thus, the optimal holding, z, is characterized as
+z = −1
+ϵσ2v
+(pt −v).
+(IA.2.3)
+□
+The rationale behind this specification is straightforward: the information-insensitive investor
+focuses solely on the ex-ante expected fundamental value, v, and tends to buy more of the asset
+when pt −v is more negative, interpreting this as a stronger indication that the asset is currently
+undervalued. The demand curve is proportional to the spread between the ex-ante expected
+fundamental value and the market price. Graham (1973) names this spread a safety margin.
+The average asset holding of the information-insensitive investor, denoted as z, is often
+substantial. This implies a small price elasticity of demand, given by ε = E[(dzt/dpt)(pt/zt)] =
+−ξE[pt/zt] ≈−ξ/z, as E[pt] is close to v ≡1. Studies indicate that information-insensitive
+investors with low price elasticity of demand play an important role in shaping asset prices (e.g.,
+Greenwood and Vayanos, 2014; Vayanos and Vila, 2021; Greenwood et al., 2023).
+Moreover, the concept of specifying exogenous demand curves within the framework of a noisy
+rational expectation equilibrium shares similarities with studies conducted by Hellwig, Mukherji
+and Tsyvinski (2006) and Goldstein, Ozdenoren and Yuan (2013), among others. The fundamental
+idea is to capture relevant institutional frictions and preferences in a parsimonious and tractable
+manner. Notably, our demand curves can be reinterpreted as “noisy supply curves” in these prior
+works by introducing a new variable ezt ≡−(ut + zt). Specifically, ezt represents the total trading
+supply provided by the noisy trader and the information-insensitive investor to absorb the trading
+demand of informed speculators. The total supply ezt follows an exogenous noisy supply curve
+defined as:
+ezt = −ut + ξ(pt −v),
+(IA.2.4)
+where −ut can be reinterpreted as the unobservable demand or supply shock in the context of the
+above prior works.
+Trading occurs through the market maker, whose role is to absorb the order flow while
+5
+
+
+=== OA PAGE 6 ===
+minimizing pricing errors. The market maker observes the combined order flow of informed
+speculators and the noise trader, represented by yt = ∑I
+i=1 xi,t + ut, as well as the order flow zt of
+the information-insensitive investor. However, the market maker cannot distinguish between order
+flows from informed speculators and the noise trader. Thus, the market maker can only make
+statistical inferences about the fundamental value vt based on the combined order flow yt rather
+than individual order flows. The market maker sets the price pt to jointly minimize inventory and
+pricing errors according to the following objective function:
+min
+pt E
+
+(yt + zt)2 + θ(pt −vt)2
+yt
+
+,
+(IA.2.5)
+where θ > 0 represents the weight that the market maker places on minimizing pricing errors.
+Here, E [·|yt] denotes the market maker’s expectation over vt, conditioned on the observed
+combined order flow yt and its belief about how informed speculators would behave in the
+equilibrium.
+The market maker’s objective function (IA.2.5) captures both the inventory cost and asymmetric
+information faced by the market maker. Because the market maker takes the position −(yt + zt)
+to clear the market, the term (yt + zt)2 represents its inventory-holding costs. The quadratic
+form is adopted for tractability, consistent with the literature (e.g., Mildenstein and Schleef, 1983).
+The term θ(pt −vt)2 captures the market maker’s efforts to reduce pricing errors arising from
+asymmetric information. The weight θ serves as a reduced-form way to capture the various
+benefits of reducing pricing errors, such as increased trading flows from a growing client base or
+enhanced competitive advantages over other trading platforms.1 As θ approaches zero, the price
+pt is primarily determined by the market clearing condition, yt + zt = 0, as in the model of Kyle
+and Xiong (2001). Conversely, as θ increases towards infinity, the price pt is primarily determined
+by the pricing-error minimization condition, pt = E [vt|yt], as in the model of Kyle (1985).
+Because multiple informed speculators engage in a repeated game of trading in our model,
+multiple equilibria may emerge. We identify three types of equilibria: the non-collusive benchmark,
+the perfect cartel equilibrium, and the collusive equilibrium sustained by price-trigger strategies.
+Throughout our analysis, we assume that the market maker is aware of the specific equilibrium in
+which informed speculators are participating. Specifically, we consider the linear and symmetric
+equilibrium in which the trading strategy of the informed speculators is characterized by
+xi,t = χ(vt −v), for all i = 1, · · · , I.
+(IA.2.6)
+1Similarly, in the context of e-commerce platforms, it is often assumed that the platform aims to maximize a
+weighted average of per-unit fee revenues and consumer surplus (see, e.g., Johnson, Rhodes and Wildenbeest, 2023).
+The weight on consumer surplus in this context is a reduced-form way to capture various aspects of increasing
+consumer surplus. For example, increasing consumer surplus allows the platform to dynamically expand its consumer
+base over time and better compete with rival platforms.
+6
+
+
+=== OA PAGE 7 ===
+The first-order condition of the minimization problem (IA.2.5) leads to
+pt =
+ξ
+ξ2 + θ yt +
+ξ2
+ξ2 + θ v +
+θ
+ξ2 + θE [vt|yt] ,
+where E [vt|yt], according to Bayesian updating, is
+E [vt|yt] = v + γyt,
+with γ =
+Iχ
+(Iχ)2 + σ2u/σ2v
+.
+Therefore, the market maker’s pricing rule is
+pt = v + λyt, with λ = θγ + ξ
+θ + ξ2 .
+While the impact of the pricing error term may be minimal in practice, we choose to treat
+θ as a tiny, universally fixed positive constant in both our theoretical and simulation analyses.
+By fixing θ, we exclude it from the comparative-static analysis. This approach creates a more
+conceptually coherent theoretical framework or laboratory, featuring two meaningful extreme
+benchmarks. Specifically, as ξ approaches infinity, the price pt converges to v + ξ−1yt, set by the
+market clearing condition yt + zt = 0, as in Kyle and Xiong (2001). Conversely, as ξ decreases
+towards zero, pt shifts to the efficient price E[vt|yt], as in Kyle (1985), if θ > 0.
+One of the main reasons for requiring θ > 0 is to ensure a meaningful benchmark as ξ →
+0. If θ = 0, the market price is determined solely by the market-clearing condition, leading
+to pt = v + ξ−1yt. As a result, in the extreme case where ξ →0, the benchmark becomes
+uninformative and does not provide a useful reference point for our analysis.
+Specifically,
+according to Propositions IA.1 and IA.2, it becomes evident that no informed speculator would act
+on their private information vt, with χN →0 in the non-collusive Nash equilibrium and χM →0
+in the perfect cartel benchmark, when ξ →0. This occurs while noise trading risk σu remain
+unchanged. As a result, the market price is pN
+t = v +
+I
+I+1(vt −v) + ξ−1ut in the non-collusive
+Nash equilibrium, and it is pM
+t
+= v + 1
+2(vt −v) + ξ−1ut in the perfect cartel benchmark. Clearly,
+when ξ →0, the market price is infinitely volatile, solely driven by the noise trading flow ut.
+Suppose all informed speculators adopt the same trading strategy characterized by χ as in
+(IA.2.6). We define the trading profit function Π(χ, λ) as follows:
+Π(χ, λ) ≡E [(vt −v −λ(Iχ(vt −v) + ut)) χ(vt −v)] = (1 −λIχ) χσ2
+v.
+(IA.2.7)
+Non-collusive Nash Equilibrium.
+We use the superscript N to denote the variables in the
+noncollusive Nash equilibrium. At the beginning of each period t, each informed speculator i
+7
+
+
+=== OA PAGE 8 ===
+solves the following problem:
+xN(vt) = argmax
+xi
+E
+
+(vt −pt) xi
+vt
+
+,
+(IA.2.8)
+where E [·|vt] is informed investor i’s expectation conditional on the privately observed vt and its
+belief about how the market maker would set the price in the equilibrium as pt = pN(yt). The
+equilibrium pricing function pN(·) is given by:
+pN(yt) = v + λNyt, with λN = θγN + ξ
+θ + ξ2
+and γN =
+IχN
+(IχN)2 + (σu/σv)2,
+(IA.2.9)
+where yt is the combined order flow of informed speculators and the noise trader, given by
+yt = xi + (I −1)xN(vt) + ut.
+(IA.2.10)
+The non-collusive Nash equilibrium can be summarized in the following proposition.
+Proposition IA.1. The order flow of informed speculators and price in the non-collusive Nash equilibrium
+are
+xN(vt) = χN(vt −v) and pN(yt) = v + λNyt, respectively,
+where χN and λN satisfy
+χN =
+1
+(I + 1)λN
+and
+λN = θγN + ξ
+θ + ξ2
+with γN =
+IχN
+(IχN)2 + (σu/σv)2.
+The expected profit of informed speculators is
+πN =
+
+1 −λNIχN
+χNσ2
+v =
+σ2
+v
+(I + 1)2λN .
+Perfect Cartel Benchmark.
+Consider a cartel that consists all I informed speculators under
+perfect collusion. The cartel is a monopolist who chooses each informed speculator’s order flow to
+maximize total profits. Because informed speculators are symmetric, the cartel solves the following
+problem
+xM(vt) = argmax
+x
+E
+
+(vt −pt) x
+vt
+
+,
+(IA.2.11)
+where E [·|vt] is informed investor i’s expectation conditional on the privately observed vt and its
+belief about how the market maker would set the price in the equilibrium as pt = pM(yt). The
+equilibrium pricing function pM(·) is given by:
+pM(yt) = v + λMyt, with λM = θγM + ξ
+θ + ξ2
+and γM =
+IχM
+(IχM)2 + (σu/σv)2,
+(IA.2.12)
+8
+
+
+=== OA PAGE 9 ===
+where yt is the combined order flow of informed speculators and the noise trader, given by
+yt = Ix + ut.
+(IA.2.13)
+The perfect cartel benchmark can be summarized in the following proposition.
+Proposition IA.2. The order flow of informed speculators and price in the perfect cartel benchmark are
+xM(vt) = χM(vt −v) and pM(vt) = v + λMyt, respectively,
+where χM and λM satisfy
+χM =
+1
+2IλM
+and
+λM = θγM + ξ
+θ + ξ2
+with γM =
+IχM
+(IχM)2 + (σu/σv)2.
+The expected profit of informed speculators is
+πM =
+
+1 −λMIχM
+χMσ2
+v =
+σ2
+v
+4IλM .
+Collusive Nash Equilibrium.
+Information asymmetry in capital markets makes grim-trigger
+strategies ineffective for sustaining tacit collusion, as investors cannot accurately observe or
+monitor each other’s actions.2 However, tacit collusion can still be sustained under information
+asymmetry through price-trigger strategies with imperfect monitoring. If an informed speculator
+can reliably infer other informed speculators’ total order flows from the market price, collusive
+incentives can be created.
+The concept of tacit collusion sustained by price-trigger strategies was first introduced by
+Green and Porter (1984). Even with imperfect monitoring, agents can establish collusive incentives
+by allowing noncollusive competition to occur with positive probabilities. Abreu, Pearce and
+Stacchetti (1986) further characterize optimal symmetric equilibria in this context, revealing two
+extreme regimes: a collusive regime and a punishment regime featuring a noncollusive reversion.
+In the collusive regime, informed speculators implicitly coordinate on submitting order flows in
+a less aggressive manner than what they would do in the noncollusive Nash equilibrium. If the
+price breaches a critical level, suspicion of cheating arises, leading to a noncollusion reversion. In
+the punishment regime, informed speculators trade noncollusively and obtain low profits.
+We now describe the collusive Nash equilibrium sustained by price-trigger strategies under
+information asymmetry, as studied by Green and Porter (1984). Specifically, we focus on the
+symmetric collusive Nash equilibrium in which all I informed speculators choose the same
+2Tacit collusion sustained by grim-trigger strategies has been extensively studied since the pioneering work of
+Fudenberg and Maskin (1986) and Rotemberg and Saloner (1986), among others. Recent studies delve into the impact
+of such tacit collusion sustained by grim-trigger strategies on pricing in capital markets (e.g., Opp, Parlour and
+Walden, 2014; Dou, Ji and Wu, 2021a,b; Dou, Wang and Wang, 2023).
+9
+
+
+=== OA PAGE 10 ===
+collusive order flow, denoted by xC(vt). Such trading strategies are sustained by a price-trigger
+strategy: Informed speculators are initially in the “normal” state, sC
+0 = 0, in period 0, and submit
+their respective order flows xC(vt). Informed speculators will continue to do so until the market
+price falls below a trigger price q(vt) if vt < v or goes above a trigger price q(vt) if vt > v in
+some period t > 0. Then, in period t + 1, they will enter the “reversionary” state, sC
+t+1 = 1, with
+probability η, or stay in the normal state, sC
+t+1 = 0, with probability 1 −η. If they enter in the
+reversionary state in period t + 1, they will trade noncollusively and continue to do so with the
+same probability η in each subsequent period up to period t + T. Thus, the reversionary episode
+can lasts for at most T periods.
+Similar to Green and Porter (1984), we assume that the state variable sC
+t is common knowledge
+among all agents. We characterize the equilibrium order flows and prices in each period t. There
+are two cases: when sC
+t = 1, the state of world is reversionary, and thus the equilibrium order flows
+and prices follow the noncollusive equilibrium in Section 3.2 of the main text; and when sC
+t = 0,
+the state of world is normal. In this case, we focus on linear policy functions and characterize the
+equilibrium order flow xC(vt) and price pC
+t as follows:
+xC(v) ≡χC(v −v),
+(IA.2.14)
+pC(y) = v + λCy, with λC = θγC + ξ
+θ + ξ2
+and γC =
+IχC
+(IχC)2 + σ2u/σ2v
+.
+(IA.2.15)
+The price-trigger function q(v) is specified based on the expected price when all informed
+speculators trade coordinately according to xC(v) conditional on v, namely, pC(v) ≡E
+
+pC(y)|v
+
+.
+Specifically, plugging (IA.2.14) into (IA.2.15) and taking expectation over u, we obtain that
+pC(v) ≡v + λCIχC(v −v). The price-trigger function q(v) is specified as follows:
+q(v) ≡
+(
+pC(v) + λCσuω,
+if v > v
+pC(v) −λCσuω,
+if v < v,
+(IA.2.16)
+where ω > 0 is a parameter that characterizes the tightness of the price trigger.
+Equation (IA.2.16) warrants further discussions. First, when v > v, informed investors have
+incentives to buy a large amount of the asset, which boosts up its price. As a result, when v > v, a
+meaningful price-trigger strategy would punish the potential deviating counterparty by reverting
+to the noncollusive Nash equilibrium once the market price goes above a certain high-level
+threshold q(v). In contrast, when v < v, informed investors have incentives to sell a large amount
+of the asset, which suppresses down its price. As a result, when v < v, a meaningful price-trigger
+strategy would punish the potential deviating counterparty by reverting to the noncollusive Nash
+equilibrium once the market price falls below a certain low-level threshold q(v). Second, there
+is no price threshold when v = v because no informed investor would have incentives to trade
+in this case. Third, although there are infinitely many alternative ways to specify the functional
+form of the threshold q(v), we focus on a specification that is not only statistically meaningful but
+10
+
+
+=== OA PAGE 11 ===
+also ensures a linear model solution as in Kyle (1985). If no one deviates from the coordinated
+trading, each informed speculator can infer that the noise order is but = [pt −pC(v)]/λC based on
+the observed price pt = pC(yt). If but is excessively positive when vt > v, say but > ωσu for some
+constant ω > 0, the informed speculator would suspect that some other informed speculators
+might have deviated from the implicit agreement. Analogously, if but is excessively negative when
+vt < v, say but < −ωσu for some constant ω > 0, the informed speculator would suspect that
+some other informed speculators might have deviated from the implicit agreement. Fourth, the
+multiplier σu ensures that the probability of price-trigger violation is independent of the magnitude
+of noisy trading, σu, in the collusive Nash equilibrium.
+2.2
+Proof of Lemma 1
+The information-insensitive investor solves the following portfolio optimization problem for a
+given pt:
+max
+z
+E
+h
+−e−ϵ(vt−pt)z/ϵ
+i
+.
+(IA.2.17)
+Because vt −pt is distributed as N(v −pt, σ2
+v), the first-order condition with respect to z is
+0 =
+h
+(v −pt) −ϵzσ2
+v
+i
+e−ϵz(v−pt)+(ϵz)2σ2v/2.
+(IA.2.18)
+Thus, the optimal holding, z, is characterized as
+z = −1
+ϵσ2v
+(pt −v).
+(IA.2.19)
+2.3
+Proof of Proposition 3.1
+Impossibility of Price-Trigger Collusive Nash Equilibrium.
+Given that sC
+t = 0 (i.e., informed
+speculators are in the collusive regime in period t), let JC(χi) denote each informed speculator i’s
+expected present value of future profits, when investor i chooses xi,t = χi(vt −v) and all other
+I −1 informed investors choose xC(vt) = χC(vt −v). The value of JC(χi) satisfies the following
+recursive relation:
+JC(χi) =E
+h
+vt −pC(yt)
+
+χi(vt −v)
+i
+(IA.2.20)
++ ρJC(χi) × P
+
+Price trigger is not violated in period t
+χi, χC
+
++ ρE
+"
+T
+∑
+τ=1
+(ρη)τ−1 h
+ηπN(vt+τ) + (1 −η)JC(χi)
+i
++ (ρη)TJC(χi)
+#
+×
+
+1 −P
+
+Price trigger is not violated in period t
+χi, χC
+
+,
+11
+
+
+=== OA PAGE 12 ===
+where pC(·) is the pricing function of market makers in the collusive Nash equilibrium and
+pC(yt) = v + λCyt, with λC = θγC + ξ
+θ + ξ2
+and γC =
+IχC
+(IχC)2 + (σu/σv)2,
+(IA.2.21)
+yt = χi(vt −v) + (I −1)xC(vt) + ut.
+(IA.2.22)
+The probability that the price trigger is not violated in period t is
+P
+
+Price trigger is not violated in period t
+χi, χC
+
+= E [P (pt ≤q(vt)|vt) 1{vt > v}] + E [P (pt ≥q(vt)|vt) 1{vt < v}]
+= E
+h
+Φ(σ−1
+u (χC −χi)(vt −v) + ω)1{vt > v}
+i
++ E
+h
+Φ(σ−1
+u (χi −χC)(vt −v) + ω)1{vt < v}
+i
+,
+where Φ(·) is the CDF of the standard normal distribution.
+Evaluating equality (IA.2.20) at χi = χC leads to
+JC(χC) =
+
+1 −λCIχC
+χCσ2
+v + ρJC(χC)Φ(ω) + ρη
+
+1 −(ρη)T
+1 −ρη
+E
+h
+πN(v)
+i
+[1 −Φ(ω)]
++ ρ(1 −η) + (1 −ρ)(ρη)T+1
+1 −ρη
+JC(χC) [1 −Φ(ω)] .
+(IA.2.23)
+Thus, we can obtain that
+JC(χC) =
+
+1 −λCIχC
+χCσ2
+v + ρη
+
+1 −(ρη)T
+1 −ρη
+E
+h
+πN(v)
+i
+[1 −Φ(ω)]
+1 −ρΦ(ω) −ρ(1 −η) + (1 −ρ)(ρη)T+1
+1 −ρη
+[1 −Φ(ω)]
+.
+(IA.2.24)
+The first-order derivative of the both sides of (IA.2.20) with respect to χi, evaluated at χi = χC,
+is
+∇JC(χC) =
+h
+1 −λC(I + 1)χCi
+σ2
+v + ρη[1 −(ρη)T]
+1 −ρη
+1
+σu
+ϕ(ω)E [|v −v|] E
+h
+πN(v)
+i
++
+ρ(1 −η) + (1 −ρ)(ρη)T+1
+1 −ρη
+−ρ
+
+JC(χC) 1
+σu
+ϕ(ω)E [|v −v|]
+(IA.2.25)
++ ρ
+h
+∇JC(χC)
+i
+Φ(ω) + ρ(1 −η) + (1 −ρ)(ρη)T+1
+1 −ρη
+h
+∇JC(χC)
+i
+[1 −Φ(ω)] ,
+where ϕ(·) is the probability density function of the standard normal distribution.
+Because v −v is distributed as N(0, σ2
+v), it follows that E [|v −v|] = σv
+q
+2π. Plugging it into
+12
+
+
+=== OA PAGE 13 ===
+(IA.2.25), we obtain that
+∇JC(χC) =
+h
+1 −λC(I + 1)χCi
+σ2
+v + ρη[1 −(ρη)T]
+1 −ρη
+σv
+σu
+ϕ(ω)
+r
+2
+πE
+h
+πN(v)
+i
++
+ρ(1 −η) + (1 −ρ)(ρη)T+1
+1 −ρη
+−ρ
+
+JC(χC)σv
+σu
+ϕ(ω)
+r
+2
+π
+(IA.2.26)
++ ρ
+h
+∇JC(χC)
+i
+Φ(ω) + ρ(1 −η) + (1 −ρ)(ρη)T+1
+1 −ρη
+h
+∇JC(χC)
+i
+[1 −Φ(ω)] ,
+The policy variable χC constitutes a collusive Nash equilibrium if speculator i has no incentive
+to deviate by setting χi̸ = χC. The first-order condition with respect to χi, characterized by
+∇JC(χC) = 0, leads to
+0 =
+h
+1 −λC(I + 1)χCi
+σ2
+v + ρη[1 −(ρη)T]
+1 −ρη
+σv
+σu
+ϕ(ω)
+r
+2
+πE
+h
+πN(v)
+i
++
+ρ(1 −η) + (1 −ρ)(ρη)T+1
+1 −ρη
+−ρ
+
+JC(χC)σv
+σu
+ϕ(ω)
+r
+2
+π.
+(IA.2.27)
+We first consider the condition (i) that ξ is tiny relative to θ. In this case, ξ/θ ≈0, and thus,
+according to (IA.2.21), λC ≈γC. As a result, the market resembles the setting of Kyle (1985), where
+the demand from information-insensitive investors is negligible. Given that λC = γC, it follows
+that
+χN =
+1
+√
+I
+σu
+σv
+and χM = 1
+I
+σu
+σv
+.
+(IA.2.28)
+Given the system’s continuity, it suffices to show that no solution χC ∈(0, χN) exists such
+that Π(χC, λC) > Π(χN, λN) in the Kyle (1985) environment, where Π(·, ·) is defined in (IA.2.7).
+Let χC = eχC σu
+σv , and define eχM ≡1
+I and eχN =
+1
+√
+I. Then, it is equivalent to show that there is no
+solution eχC ∈(0, eχN) such that Π(eχC σu
+σv , λC) > Π(eχN σu
+σv , λN).
+In the Kyle case, E
+
+πN(v)
+ =
+σuσv
+(I+1)
+√
+I. Therefore, equations (IA.2.24) and (IA.2.27) can be
+rewritten, respectively, as follows:
+JC(χC) =
+
+1 −γCIχC
+χCσ2
+v + ρη
+
+1 −(ρη)T
+1 −ρη
+[1 −Φ(ω)]
+σuσv
+(I + 1)
+√
+I
+1 −ρΦ(ω) −ρ(1 −η) + (1 −ρ)(ρη)T+1
+1 −ρη
+[1 −Φ(ω)]
+.
+(IA.2.29)
+and
+0 =
+h
+1 −γC(I + 1)χCi
+σ2
+v + ρη[1 −(ρη)T]
+1 −ρη
+σv
+σu
+ϕ(ω)
+r
+2
+π
+σuσv
+(I + 1)
+√
+I
++
+ρ(1 −η) + (1 −ρ)(ρη)T+1
+1 −ρη
+−ρ
+
+JC(χC)σv
+σu
+ϕ(ω)
+r
+2
+π.
+(IA.2.30)
+13
+
+
+=== OA PAGE 14 ===
+After plugging (IA.2.29) into (IA.2.30) and rearranging terms, we obtain that eχC is the root of
+the following quadratic equation:
+0 = 1 −I(eχC)2 −ϑ
+(
+eχC −
+1
+(I + 1)
+√
+I
+h
+1 + (I eχC)2i ϵ(1 −ρ)
+ρ −κ
+)
+,
+(IA.2.31)
+where the coefficients are
+ϑ =
+(ρ −κ)ϕ(ω)
+1 −ρΦ(ω) −κ[1 −Φ(ω)]
+r
+2
+π,
+(IA.2.32)
+κ =ρ(1 −η) + (1 −ρ)(ρη)T+1
+1 −ρη
+,
+(IA.2.33)
+ϵ =ρη[1 −(ρη)T]
+1 −ρη
+.
+(IA.2.34)
+The algebra is cumbersome in the general case with η ∈(0, 1). To simplify, we focus on
+η = 1 without loss of generality, ensuring that punishment occurs with probability one when
+the price trigger is violated. The case with η ∈(0, 1) is isomorphic to the case with η = 1
+after recalibrating ω and T to achieve the same intensity and expected profit loss of punishment.
+Therefore, restricting attention to η = 1 preserves generality in our proof.
+When η = 1, we have κ = ρT+1 and ϵ = ρ(1−ρT)
+1−ρ
+. Thus, equations (IA.2.29) to (IA.2.32) are
+simplified as follows:
+JC(χC) =
+
+1 −γCIχC
+χCσ2
+v + ρ(1 −ρT)
+1 −ρ
+[1 −Φ(ω)]
+σuσv
+(I + 1)
+√
+I
+1 −ρΦ(ω) −ρT+1 [1 −Φ(ω)]
+.
+(IA.2.35)
+and
+0 =
+h
+1 −γC(I + 1)χCi
+σ2
+v +
+"
+ρ(1 −ρT)
+1 −ρ
+σuσv
+(I + 1)
+√
+I
++
+
+ρT+1 −ρ
+
+JC(χC)
+#
+σv
+σu
+ϕ(ω)
+r
+2
+π. (IA.2.36)
+Therefore, eχC is the root of the following quadratic equation:
+0 = 1 −I(eχC)2 −ϑ
+(
+eχC −
+1
+(I + 1)
+√
+I
+h
+1 + (I eχC)2i)
+,
+(IA.2.37)
+where
+ϑ =
+ϕ(ω)
+1−ρ
+ρ−ρT+1 + 1 −Φ(ω)
+r
+2
+π.
+(IA.2.38)
+14
+
+
+=== OA PAGE 15 ===
+Solving the above problem, we obtain
+eχC =
+ϑ ±
+−2
+√
+I + I−1
+I+1ϑ
+
+−2I + 2ϑ I
+√
+I
+I+1
+.
+There are three cases, which we examine below.
+Case 1: if −2
+√
+I + I−1
+I+1ϑ ≤0 and −2I + 2ϑ I
+√
+I
+I+1 < 0, the larger root is
+eχC =
+ϑ +
+
+−2
+√
+I + I−1
+I+1ϑ
+
+−2I + 2ϑ I
+√
+I
+I+1
+=
+1
+√
+I
+= eχN,
+and the other root, which is smaller, is given by
+eχC =
+ϑ −
+
+−2
+√
+I + I−1
+I+1ϑ
+
+−2I + 2ϑ I
+√
+I
+I+1
+=
+√
+I +
+ϑ
+I+1
+−I + ϑ I
+√
+I
+I+1
+,
+which is negative. Thus, there does not exist a solution eχC that lies in (0, 1
+√
+I), meaning that the
+collusive Nash equilibrium does not exist.
+Case 2: if −2
+√
+I + I−1
+I+1ϑ ≤0 and −2I + 2ϑ I
+√
+I
+I+1 > 0, the smaller root is
+eχC =
+ϑ +
+
+−2
+√
+I + I−1
+I+1ϑ
+
+−2I + 2ϑ I
+√
+I
+I+1
+=
+1
+√
+I
+= eχN,
+and the other root, which is larger, is greater than or equal to eχN. Thus, there does not exist a
+solution eχC that lies in (0, 1
+√
+I), meaning that the collusive equilibrium does not exist.
+Case 3: if −2
+√
+I + I−1
+I+1ϑ > 0. In this case, we can prove that
+−2I + 2ϑ I
+√
+I
+I + 1 =
+√
+I
+
+−2
+√
+I + 2ϑ
+I
+I + 1
+
+>
+√
+I
+
+−I −1
+I + 1ϑ + 2ϑ
+I
+I + 1
+
+= ϑ
+√
+I > 0.
+Thus, the larger root is
+eχC =
+ϑ +
+
+−2
+√
+I + I−1
+I+1ϑ
+
+−2I + 2ϑ I
+√
+I
+I+1
+=
+1
+√
+I
+= eχN,
+and the smaller root is
+eχC =
+ϑ −
+
+−2
+√
+I + I−1
+I+1ϑ
+
+−2I + 2ϑ I
+√
+I
+I+1
+=
+√
+I +
+ϑ
+I+1
+−I + ϑ I
+√
+I
+I+1
+.
+15
+
+
+=== OA PAGE 16 ===
+For the smaller root to lie in (0, 1
+√
+I), we need −I + ϑ I
+√
+I
+I+1 > 0 given that ϑ > 0, which implies
+ϑ > I + 1
+√
+I
+.
+Since I+1
+√
+I < 2
+√
+I I+1
+I−1, the existence of a collusive Nash equilibrium requires that ϑ > 2
+√
+I I+1
+I−1 in
+this case. To rule this out, we need to show the condition ϑ ≤2
+√
+I I+1
+I−1, which ensures that Case 3
+does not arise. Since
+1−ρ
+ρ−ρT+1 is always positive for any ρ ∈(0, 1), it follows that
+ϑ <
+r
+2
+π H(ω),
+(IA.2.39)
+where H(ω) ≡ϕ(ω)/ [1 −Φ(ω)] is the hazard rate function of the standard normal distribution.
+Because H(ω) is monotonically increasing when ω > 0, it follows from (IA.2.39) that, when ¯ω = 8,
+ϑ <
+r
+2
+π H( ¯ω) = 6.0515.
+(IA.2.40)
+On the other hand, it is straightforward to show that, for any integer I ≥2,
+2
+√
+I I + 1
+I −1 ≥6.666.
+(IA.2.41)
+Combining results from (IA.2.40) and (IA.2.41), we obtain
+ϑ < 2
+√
+I I + 1
+I −1.
+(IA.2.42)
+Therefore, Case 3 cannot occur.
+We then consider the condition (ii) that σu is large. In this case, according to (IA.2.21), γC ≈0
+and thus λC ≈
+ξ
+θ+ξ2. As a result, the market approximates a trading environment in which price
+recovery through market makers’ learning about the fundamental value, based on the total trade
+flow of informed speculators and noise traders, is negligible. Given that σv/σu ≈0, χN ≈
+1
+I+1
+θ+ξ2
+ξ
+and χM ≈1
+2I
+θ+ξ2
+ξ
+. Due to the continuity, it suffices to show that no solution χC ∈(0, χN) exists
+such that Π(χC,
+ξ
+θ+ξ2) > Π(χN,
+ξ
+θ+ξ2) in the trading environment, where Π(·, ·) is defined in
+(IA.2.7). Let χC = eχC θ+ξ2
+ξ
+, and define eχM ≡
+1
+2I and eχN ≡
+1
+I+1. Then, it is equivalent to show
+that there is no solution eχC ∈(0, eχN) satisfies Π(eχC θ+ξ2
+ξ
+,
+ξ
+θ+ξ2) > Π(eχN θ+ξ2
+ξ
+,
+ξ
+θ+ξ2). In this case,
+E
+
+πN(v)
+ =
+σ2v
+(I+1)2
+θ+ξ2
+ξ
+. Given that σv/σu ≈0, equation (IA.2.27) simplifies to:
+
+χC −
+1
+I + 1
+ 
+χC −
+1
+I(I + 1) −I + 1
+I
+σu
+σv
+1
+ϑ
+
+= 0.
+(IA.2.43)
+According to the definition of eχC here, which is eχC = χC
+ξ
+θ+ξ2, the equation above can be further
+16
+
+
+=== OA PAGE 17 ===
+rewritten as:
+
+eχC −
+1
+I + 1
+ 
+eχC −
+1
+I(I + 1) −I + 1
+I
+σu
+σv
+ξ
+θ + ξ2
+1
+ϑ
+
+= 0,
+(IA.2.44)
+Solving for eχC yields eχC =
+1
+I+1 or eχC =
+1
+I(I+1) + I+1
+I
+σu
+σv
+ξ
+θ+ξ2
+1
+ϑ, with the second root becoming
+arbitrarily large as σv/σu →0. This implies that no solution exists within (0, eχN). Consequently, a
+collusive Nash equilibrium does not exist when σv/σu ≈0.
+Existence of Price-Trigger Collusive Nash Equilibrium.
+Given that sC
+t = 0 (i.e., informed
+speculators are in the collusive regime in period t), let JC(χi) denote each informed speculator i’s
+expected present value of future profits, when investor i chooses xi,t = χi(vt −v) and all other
+I −1 informed investors choose xC(vt) = χC(vt −v). The value of JC(χi) satisfies the following
+recursive relation in (IA.2.20). If θ/ξ ≈0, it must hold that λC ≈1/ξ.
+When λC = 1/ξ, it holds that χN =
+ξ
+I+1, χM =
+ξ
+2I, and E
+
+πN(v)
+ =
+ξσ2v
+(I+1)2. Because the
+system is continuous, it is sufficient to show that there exists a solution χC ∈(0, χN) such that
+Π(χC, 1/ξ) > Π(χN, 1/ξ) in this environment. Without loss of generality, we focus on the case
+with η = 1, allowing us to rewrite Equations (IA.2.24) and (IA.2.27) as follows:
+JC(χC) =
+
+1 −ξ−1IχC
+χCσ2
+v + ρ −ρT+1
+1 −ρ
+[1 −Φ(ω)]
+ξσ2
+v
+(I + 1)2
+1 −ρΦ(ω) −ρT+1 [1 −Φ(ω)]
+(IA.2.45)
+and
+0 =
+h
+1 −ξ−1(I + 1)χCi
+σ2
+v −
+
+ρJC(χC) −ρ −ρT+1
+1 −ρ
+ξσ2
+v
+(I + 1)2 −ρT+1JC(χC)
+ σv
+σu
+ϕ(ω)
+r
+2
+π.
+(IA.2.46)
+Therefore, χC is the root of the following quadratic equation:
+0 = 1 −ξ−1(I + 1)χC −ϑσ
+
+1 −ξ−1IχC
+χC −
+ξ
+(I + 1)2
+
+,
+where
+ϑσ = σv
+σu
+ϑ = σv
+σu
+ϕ(ω)
+1−ρ
+ρ−ρT+1 + 1 −Φ(ω)
+r
+2
+π.
+(IA.2.47)
+Solving the above problem, we obtain
+χC =
+ϑσ + I+1
+ξ ±
+ ϑσ(I−1)
+I+1
+−I+1
+ξ
+
+2ϑσI
+ξ
+.
+(IA.2.48)
+There are two cases.
+17
+
+
+=== OA PAGE 18 ===
+Case 1: if ϑσ(I−1)
+I+1
+−I+1
+ξ
+≤0, then the smaller root is
+χC =
+ϑσ + I+1
+ξ +
+
+ϑσ(I−1)
+I+1
+−I+1
+ξ
+
+2ϑσI
+ξ
+= χN.
+Thus, the larger root must be strictly greater than χN, ruling out the possibility of a collusive Nash
+equilibrium. To guarantee the existence of a collusive Nash equilibrium, we must show that this
+scenario never arises when θ/ξ and σu are both small. Specifically, to ensure that this case never
+occurs, it requires that ϑσ > ξ−1 (I+1)2
+I−1 , which, according to (IA.2.47), holds when σu is sufficiently
+small.
+Case 2: if ϑσ(I−1)
+I+1
+−I+1
+ξ
+> 0, i.e., ϑσ > ξ−1 (I+1)2
+I−1 , then the larger root is
+χC =
+ϑσ + I+1
+ξ +
+
+ϑσ(I−1)
+I+1
+−I+1
+ξ
+
+2ϑσI
+ξ
+= χN.
+The smaller root is
+χC =
+ϑσ + I+1
+ξ −
+
+ϑσ(I−1)
+I+1
+−I+1
+ξ
+
+2ϑσI
+ξ
+=
+ϑσξ
+I+1 + I + 1
+ϑσI
+.
+(IA.2.49)
+It is obvious that the smaller root lies between 0 and χN.
+To show that Equation (IA.2.49)
+characterizes a valid collusive Nash equilibrium, we need to verify that (IA.2.49) satisfies
+Π(χC, 1/ξ) > Π(χN, 1/ξ),
+(IA.2.50)
+when θ/ξ and σu are both small. To prove the inequality in (IA.2.50), it suffices to show that
+ 
+1 −ξ−1I
+ϑσξ
+I+1 + I + 1
+ϑσI
+! ϑσξ
+I+1 + I + 1
+ϑσI
+>
+
+1 −ξ−1I
+ξ
+I + 1
+
+ξ
+I + 1,
+(IA.2.51)
+which can be further simplified into
+
+1 −εσ
+I
+
+(1 + εσ) > 1,
+(IA.2.52)
+with εσ ≡(I + 1)2/(ξϑσ).
+The inequality in (IA.2.52) is equivalent to
+εσ < I −1,
+(IA.2.53)
+which can be rewritten as
+ξϑσ > (I + 1)2
+I −1 .
+(IA.2.54)
+18
+
+
+=== OA PAGE 19 ===
+According to the definition of ϑσ in (IA.2.47), the inequality (IA.2.54) holds as long as σu is
+sufficiently close to zero. Therefore, with all other parameters held constant, a collusive Nash
+equilibrium through price-trigger strategies exists if both ξ is large relative to θ and σu is small.
+2.4
+Proof of Proposition 3.2
+We first show the existence of a collusive experience-based equilibrium with trading strategy χC ∈
+[χM, χN) for any ξ > 0 and σu > 0, where χN and χM characterize the optimal trading strategy
+of informed investors in the non-collusive Nash equilibrium and the perfect cartel benchmark,
+respectively. We show that, for any χC such that χM ≤χC < χN, there exists an experience-based
+equilibrium, in which informed speculators uniformly undervalue aggressive trading strategies,
+perpetuating an incorrect system of outcome evaluation that remains uncorrected. Along the
+equilibrium path, the market price pC(y) satisfies
+pC(y) ≡v + λCy, with λC = θγC + ξ
+θ + ξ2
+and γC =
+IχC
+(IχC)2 + σ2u/σ2v
+,
+where y is the total order flow of informed speculators and noise traders.
+If χC characterizes the trading strategy in an experience-based equilibrium, the “correct”
+outcome evaluation of any possible strategy χ is given by:
+J(χ) ≡E
+h
+(vt −pC(yt))χ(vt −v)
+i
++ ρJ(χC),
+(IA.2.55)
+where yt = χ(vt −v) + (I −1)χC(vt −v) + ut. It thus follows that
+J(χ) ≡
+h
+1 −λCχ −λC(I −1)χCi
+χσ2
+v + ρJC(χC).
+(IA.2.56)
+As a result, the optimal trading strategy χC and its evaluation J(χC) in an experience-based
+equilibrium χC must satisfy the following condition:
+J(χC) =
+σ2
+v
+1 −ρ
+
+1 −λCIχC
+χC.
+(IA.2.57)
+Below, we establish existence by construction. Specifically, we construct a distortion function
+D(χ) that is strictly increasing in χ, i.e., ∂D(χ)
+∂χ
+> 0, and ensures that that χC can be sustained as
+an experience-based equilibrium outcome by an evaluation system
+JC(χ) ≡J(χ) −D(χ),
+(IA.2.58)
+If such a distortion function D(χ) exists, its strict increase in χ implies that the perceived value
+of more aggressive trading strategies is systematically lower, leading informed speculators to
+19
+
+
+=== OA PAGE 20 ===
+undervalue them.
+Particularly, we construct a distortion function as follows:
+D(χ) ≡ςC[1 −(I + 1)λCχC]σ2
+v(χ −χC) + ς
+2σ2
+uσ2
+v
+h
+χ2 −(χC)2i
+,
+where ςC ≥0.
+(IA.2.59)
+It is obvious that D(χ) is strictly increasing in χ for χ > 0. This follows from
+∂D(χ)
+∂χ
+= ςC h
+1 −(I + 1)λCχCi
+σ2
+v + ςσ2
+uσ2
+vχ.
+(IA.2.60)
+Because χC < χN, it holds that λCχC < λNχN following the proof provided in Online Appendix
+2.5. Thus,
+
+1 −(I + 1)λCχC
+σ2
+v >
+
+1 −(I + 1)λNχN
+σ2
+v = 0. Thus, the first term on the right-
+hand side of (IA.2.60) is positive. Since the second term on the right-hand side of (IA.2.60) is also
+clearly positive for χ > 0, we conclude that
+∂D(χ)
+∂χ
+> 0,
+for χ > 0.
+(IA.2.61)
+Now, we verify the three conditions for the experience-based equilibrium. First, the trading
+game clearly follows a recurrent Markovian state process.
+Second, the optimality condition for the experience-based equilibrium stipulates that the
+strategies must be optimal, given the evaluations system JC(χ) in (IA.2.58).
+Consequently,
+∂JC(χ)
+∂χ
+
+χ=χC = 0, leading to the condition that ∂J(χ)
+∂χ
+
+χ=χC = ∂D(χ)
+∂χ
+
+χ=χC. Thus, the first-order
+condition requires that
+0 = (ςC −1)
+h
+1 −(I + 1)λCχCi
+σ2
+v + ςσ2
+uσ2
+vχC.
+(IA.2.62)
+As a result, as long as the two free parameters ςC and ς are chosen to satisfy the first-order
+condition (IA.2.62), the distortion function D(χ) is consistent with the optimal trading strategy χC.
+The optimality condition also requires the Hessian condition at χC:
+∂2JC(χ)
+∂χ2
+
+χ=χC
+< 0.
+(IA.2.63)
+The second-order derivative is ∂2JC(χ)
+∂χ2
+
+χ=χC = ∂2J(χ)
+∂χ2
+
+χ=χC −∂2D(χ)
+∂χ2
+
+χ=χC. Thus, it follows that
+∂2JC(χ)
+∂χ2
+
+χ=χC
+= −2λCσ2
+v −ςσ2
+uσ2
+v < −2
+ξ
+θ + ξ2 σ2
+v −ςσ2
+uσ2
+v < 0.
+(IA.2.64)
+It is clear that the inequality in (IA.2.64) ensures that the condition in (IA.2.63) is satisfied. Given a
+20
+
+
+=== OA PAGE 21 ===
+chosen ς ≥0 that satisfies (IA.2.63), the remaining free parameter ςC ∈[0, 1) can be set to ensure
+that the first-order condition in (IA.2.62) holds exactly.
+The third condition for the experience-based equilibrium stipulates that equilibrium path
+behaviors yielding expected discounted net cash flows consistent with equilibrium path evaluations.
+Specifically, this condition requires that J(χC) = JC(χC), which holds true since D(χC) = 0 as
+specified in (IA.2.59).
+We next show the existence of a collusive experience-based equilibrium driven by over-
+perceived aversion against noise trading risk. If χC characterizes the trading strategy in an
+experience-based equilibrium, the “correct” outcome evaluation of the strategy χC is given by
+J(χ) in (IA.2.56). However, the “incorrect” outcome evaluation of the strategy χC due to the
+over-perceived noise trading risk aversion is given by
+JC(χ) =
+h
+1 −λCχ −λC(I −1)χCi
+χσ2
+v −D(χ) + ρJC(χC),
+(IA.2.65)
+where D(χ) is a distortion function specified as in (IA.2.59) with ςC set to be zero.
+In other words, the outcome evaluation is systematically biased purely due to the over-perceived
+noise trading risk aversion, captured by D(χ) in equation (IA.2.65). Our proof below focuses on
+demonstrating that there exists χC ∈[χM, χN) and ςC such that the trading strategy χC and the
+“incorrect” outcome evaluation system can be sustained in a collusive experience-based equilibrium
+driven by over-perceived aversion against noise trading risk. We consider ςC = 0. The evaluation
+of the equilibrium trading strategy χC is consistent with the valuation relation on the equilibrium
+path:
+JC(χC) =
+
+1 −λCIχC
+χCσ2
+v + ρJC(χC)
+⇒
+JC(χC) =
+σ2
+v
+1 −ρ
+
+1 −λCIχC
+χC.
+(IA.2.66)
+This implies that JC(χC) = J(χC), that is, the equilibrium path behavior χC yielding expected
+discounted net cash flows consistent with equilibrium path evaluations.
+Moreover, the equilibrium trading strategy χ is optimal under the “incorrect” outcome evalua-
+tion system of χ, which is characterized as follows:
+χC = argmax
+χ
+JC(χ),
+which is defined in (IA.2.65).
+(IA.2.67)
+The first-order condition of the above maximization problem is
+χC =
+1
+(I + 1)λC + ςσ2u
+.
+(IA.2.68)
+As specified in (3.4) of the main text, θ ≈0 holds under the assumed specification. When θ = 0,
+21
+
+
+=== OA PAGE 22 ===
+the first-order condition can be simplified into
+χC =
+1
+(I + 1)ξ−1 + ςσ2u
+<
+1
+(I + 1)ξ−1 = χN.
+(IA.2.69)
+Thus, as long as θ is sufficiently close to zero, the continuity implies that χC < χN.
+At the same time, as long as ς is sufficiently close to zero so that ςσ2
+u ≤(I −1)ξ−1, it holds that
+χC =
+1
+(I + 1)ξ−1 + ςσ2u
+≥
+1
+2Iξ−1 = χM.
+(IA.2.70)
+In addition, ∂2JC(χ)
+∂χ2
+
+χ=χC = −2λCσ2
+v −ςσ2
+uσ2
+v < 0. Thus, χC is the optimal trading strategy
+according to the evaluation system JC(χ).
+Finally, we verify that the “incorrect” outcome evaluation system is biased relative to the
+“correct” system, leading to a uniform underweighting of aggressive trading strategies. In fact, it
+is clear that
+∂D(χ)
+∂χ
+= ςχσ2
+uσ2
+v > 0, because χ > 0.
+(IA.2.71)
+2.5
+Proof of Proposition 3.3
+Informed speculators’ order flows are given by x(vt, χ) ≡χ(vt −v), where χ is determined in
+equilibrium. We denote λ(χ) = θγ(χ)+ξ
+θ+ξ2
+with γ(χ) =
+Iχ
+(Iχ)2+(σu/σv)2. As defined in (IA.2.7), the
+profit function satisfies that
+Π (χ, λ(χ)) = E [(vt −v −λ(χ)(Ix(vt, χ) + ut))x(vt, χ)]
+= E [(vt −v −λ(χ)(Iχ(vt −v) + ut))χ(vt −v)]
+= [1 −λ(χ)Iχ] χσ2
+v
+=
+
+1 −
+θ
+θ + ξ2
+(Iχ)2
+(Iχ)2 + (σu/σv)2 −
+ξ
+θ + ξ2 Iχ
+
+χσ2
+v.
+The first-order derivative of Π (χ, λ(χ)) is
+dΠ (χ, λ(χ))
+dχ
+= σ2
+v
+"
+1 −
+θI2
+θ + ξ2
+I2χ2 + 3(σu/σv)2
+[I2 + (σu/σv)2/χ2]2 −
+2ξI
+θ + ξ2 χ
+#
+.
+(IA.2.72)
+By definition of the perfect cartel benchmark, we have χM = argmax Π (χ, λ(χ)), which implies
+Π(χ,λ(χ))
+dχ
+
+χ=χM = 0. Equation (IA.2.72) shows that dΠ(χ,λ(χ))
+dχ
+is decreasing in χ. Thus, for χ > χM,
+we have dΠ(χ,λ(χ))
+dχ
+< 0. Consequently, defining πi ≡Π(χi, λ(χi)) for i ∈{N, M, C}, it follows
+that πC ∈(πN, πM], which implies ∆C ∈(0, 1], since χC ∈[χM, χN).
+22
+
+
+=== OA PAGE 23 ===
+2.6
+Proof of Proposition 3.4
+We prove the proposition in the environment where θ = 0 to simplify the derivation. More
+general environments with sufficiently small θ > 0, can be handled similarly with more complex
+derivations. By continuity, if the results hold for θ = 0, they also hold for sufficiently small θ > 0.
+Proof for part (i).
+Given the assumption of this proposition, we can restrict the analysis to
+parameter choices that ensure the existence of a collusive Nash equilibrium.
+Proof for the profit ratio ∆C. Suppose πN, πC, and πM are defined as πi ≡Π(χi, λ(χi)) for
+i ∈{N, M, C}, where Π(·, ·) is defined in (IA.2.7). When θ = 0, the expected profit associated
+with χi can be expressed as follows:
+πi = (1 −ξ−1Iχi)χiσ2
+v, for i ∈{N, M, C}.
+Thus, πC −πN can be expressed as follows:
+πC −πN =
+
+I
+I + 1 −I + 1
+ϑσξ
+ 
+ξ
+I(I + 1) + I + 1
+ϑσI
+
+σ2
+v −
+ξσ2
+v
+(I + 1)2,
+where ϑσ =
+ϕ(ω)
+1 −ρ
+ρ −ρT+1 + 1 −Φ(ω)
+σv
+σu
+r
+2
+π. At the same time, πM −πN can be expressed as follows:
+πM −πN = ξσ2
+v
+4I −
+ξσ2
+v
+(I + 1)2 = ξ (I −1)2
+4I(I + 1)2 σ2
+v.
+Thus, ∆C is
+∆C =
+4
+(I −1)2
+
+I −(I + 1)2
+ϑσξ
+ 
+1 + (I + 1)2
+ϑσξ
+
+−
+4I
+(I −1)2.
+(IA.2.73)
+When I is sufficiently large, it follows that
+(I + 1)2
+ϑσξ
+> I −1
+2
+.
+(IA.2.74)
+Within this range of parameter space, it holds that ∆C is increasing in ϑσ. Because ϑσ is decreasing
+in σu, ∆C is decreasing in σu. The subjective discount rate parameter ρ affects ∆C only through its
+impact on ϑσ. Clearly, ∆C is increasing in ρ if and only if
+1−ρ
+ρ−ρT is decreasing in ρ. We know that
+1 −ρ
+ρ −ρT =
+1
+∑T−1
+j=1 ρj ,
+(IA.2.75)
+Since ∑T−1
+j=1 ρj is increasing in ρ, it follows that
+1−ρ
+ρ−ρT is decreasing in ρ, establishing the result.
+23
+
+
+=== OA PAGE 24 ===
+Next, we show that ∆C is decreasing in I. The first-order derivative is
+∂∆C
+∂I
+= 4
+ϑσξ
+"
+2
+ I + 1
+I −1
+ 
+−
+2
+(I −1)2
+ 
+I −1 −(I + 1)2
+ϑσξ
+
++
+ I + 1
+I −1
+2 
+1 −2(I + 1)
+ϑσξ
+#
+= 4
+ϑσξ
+(I + 1)(I −3)
+(I −1)2
+
+1 −2(I + 1)2
+ϑσξ(I −1)
+
+.
+Thus, ∂∆C
+∂I < 0, when ϑσξ < 2(I+1)2
+I−1
+as in (IA.2.74). The condition is true when I is sufficiently large.
+Intuitively, when σu/σv is sufficiently small (as required to ensure the existence of the collusive
+Nash equilibrium sustained by price-trigger strategies), it follows that
+∆C ≈4(I + 1)2
+(I −1)ϑσξ .
+(IA.2.76)
+which implies that ∆C is increasing in I when I ≥3.
+Proof for the price informativeness IC. By definition, the price informativeness IC is
+IC =
+
+IχC2
+(σv/σu)2 =
+
+ξ
+I + 1 + I + 1
+ϑσ
+2 σv
+σu
+2
+,
+(IA.2.77)
+where ϑσ =
+ϕ(ω)
+1 −ρ
+ρ −ρT+1 + 1 −Φ(ω)
+σv
+σu
+r
+2
+π. The price informativeness I M is
+I M =
+
+IχM2
+(σv/σu)2 =
+ξ
+2
+2 σv
+σu
+2
+.
+(IA.2.78)
+Thus, the relative price informativeness IC/I M is
+IC
+I M =
+
+2
+I + 1 + 2(I + 1)
+ϑσξ
+2
+.
+(IA.2.79)
+Clearly, when I is sufficiently large so that ϑσξ < (I + 1)2, it follows that IC/I M is increasing in I.
+Moreover, since IC/I M is decreasing in ϑσ, which, in turn, is increasing in ρ and decreasing in σu,
+it holds that IC/I M is decreasing in ρ and increasing in σu.
+Proof for the mispricing EC. When θ = 0, by the definition of mispricing and substituting out χC
+using (IA.2.49), the mispricing EC is
+EC =
+
+1 −λCIχC
+|vt −v| =
+ 
+1 −ξ−1I
+ϑσξ
+I+1 + I + 1
+ϑσI
+!
+|vt −v| =
+
+1 −
+1
+I + 1 −I + 1
+ϑσξ
+
+|vt −v| .
+(IA.2.80)
+24
+
+
+=== OA PAGE 25 ===
+The mispricing in the perfect cartel benchmark, denoted by E M, is
+E M =
+
+1 −λMIχM
+|vt −v| =
+
+1 −ξ−1I ξ
+2I
+
+|vt −v| = |vt −v| /2.
+(IA.2.81)
+Thus, EC/E M is equal to
+EC/E M = 2
+
+1 −
+1
+I + 1 −I + 1
+ϑσξ
+
+.
+(IA.2.82)
+Obviously, EC/E M is increasing in ϑσ. Since ϑσ is increasing in ρ and decreasing in σu, EC/E M is
+increasing in ρ and decreasing in σu. In addition, when I is sufficiently large so that ϑσξ < (I + 1)2,
+it follows that EC/E M is decreasing in I.
+Proof for the market liquidity LC. By definition, the market liquidity LC is
+LC =
+1
+∂|zt + yt|/∂ut
+=
+1
+1 −ξλC .
+(IA.2.83)
+In this environment with θ/ξ ≈0, the market liquidity LC can be expressed as follows:
+LC =
+1
+1 −ξ θγC+ξ
+θ+ξ2
+
+≈
+1
+1 −ξ θγC+ξ
+ξ2
+
+=
+ξ
+θγC = ξ
+θ
+
+IχC + σ2
+u
+σ2v
+1
+IχC
+
+.
+(IA.2.84)
+When σu/σv is sufficiently small (as required to ensure the existence of the collusive Nash
+equilibrium sustained by price-trigger strategies), it follows that
+LC ≈ξ
+θ IχC
+(IA.2.85)
+The market liquidity in the perfect cartel equilibrium, LM, is
+LM = ξ
+θ
+
+IχM + σ2
+u
+σ2v
+1
+IχM
+
+= ξ
+θ
+ 
+I ξ
+2I + σ2
+u
+σ2v
+1
+I ξ
+2I
+!
+= 1
+θ
+ξ2
+2 + 2σ2
+u
+σ2v
+
+.
+(IA.2.86)
+When σu/σv is sufficiently small (as required to ensure the existence of the collusive Nash
+equilibrium sustained by price-trigger strategies), it follows that
+LM ≈ξ2
+2θ.
+(IA.2.87)
+Thus, the relative market liquidity LC/LM can be expressed as follows:
+LC
+LM = 2ξ−1IχC = 2
+
+1
+I + 1 + I + 1
+ϑσξ
+
+.
+(IA.2.88)
+Obviously, LC/LM is decreasing in ϑσ. Since ϑσ is increasing in ρ and decreasing in σu, LC/LM is
+25
+
+
+=== OA PAGE 26 ===
+decreasing in ρ and decreasing in σu. In addition, when I is sufficiently large so that ϑσξ < (I + 1)2,
+it follows that LC/LM is increasing in I.
+Proof for part (ii).
+Given the assumption of this proposition, we can restrict the analysis to
+parameter choices that ensure the existence of a collusive experience-based equilibrium sustained
+by an over-perceived aversion to noise trading risk, captured by ς > 0. According to the proof for
+Proposition 3.2 in Online Appendix 2.4, we focus on the case with
+ςσ2
+uξ ≤I −1.
+(IA.2.89)
+Proof for the profit ratio ∆C. Suppose πN, πC, and πM are defined as πi ≡Π(χi, λ(χi)) for
+i ∈{N, M, C}, where Π(·, ·) is defined in (IA.2.7). When θ = 0, the expected profit associated
+with χi can be expressed as follows:
+πi = (1 −ξ−1Iχi)χiσ2
+v, for i ∈{N, M, C}.
+Thus, based on (IA.2.70), πC −πN can be expressed as follows:
+πC −πN =
+
+1 −ξ−1I
+ξ
+(I + 1) + ςσ2uξ
+
+ξ
+(I + 1) + ςσ2uξ σ2
+v −
+ξσ2
+v
+(I + 1)2
+=
+ξσ2
+v
+(I + 1)2
+ςσ2
+uξ
+(I + 1) (I −1) −ςσ2
+uξ
+
+[(I + 1) + ςσ2uξ]2
+.
+(IA.2.90)
+At the same time, πM −πN can be expressed as follows:
+πM −πN = ξσ2
+v
+4I −
+ξσ2
+v
+(I + 1)2 = ξ (I −1)2
+4I(I + 1)2 σ2
+v.
+(IA.2.91)
+From (IA.2.90) and (IA.2.91), we know that
+∆C =
+4I
+(I −1)2
+(I + 1)(I −1)z −1
+[(I + 1)z + 1]2
+, where z ≡
+1
+ςσ2
+uξ
+.
+(IA.2.92)
+Clearly, ∆C is not affected by ρ at all. The first-order derivative of ∆C with respect to z is
+∂∆C
+∂z = 4I(I + 1)2
+(I −1)2
+1 −(I −1)z
+[(I + 1)z + 1]3
+(IA.2.93)
+When the inequality in (IA.2.89) holds, it follows that
+∂∆C
+∂z < 0,
+(IA.2.94)
+26
+
+
+=== OA PAGE 27 ===
+implying that ∆C is decreasing in z, and consequently, it is increasing in σ2
+u.
+After arranging terms, the derivative of ∆C with respect to I in its compact factorized form is:
+∂∆C
+∂I
+= −4(I + 1) [(I −1)z −1] (I2z + z + 1)
+(I −1)3 [(I + 1)z + 1]3
+, where z ≡
+1
+ςσ2
+uξ
+.
+(IA.2.95)
+When the inequality in (IA.2.89) holds, it follows that
+∂∆C
+∂I
+< 0,
+(IA.2.96)
+implying that ∆C is decreasing in I.
+Proof for the price informativeness IC. When θ = 0, by definition, the price informativeness IC is
+IC =
+
+IχC2
+(σv/σu)2 =
+
+Iξ
+(I + 1) + ςσ2uξ
+2 σv
+σu
+2
+.
+(IA.2.97)
+The price informativeness I M is
+I M =
+
+IχM2
+(σv/σu)2 =
+ξ
+2
+2 σv
+σu
+2
+.
+(IA.2.98)
+Thus, the relative price informativeness IC/I M is
+IC
+I M =
+(I −1) −ςσ2
+uξ
+(I + 1) + ςσ2uξ + 1
+2
+.
+(IA.2.99)
+Clearly, IC/I M is not affected by ρ at all, and it is decreasing in σ2
+u. Since the inequality in
+(IA.2.89) holds, it follows that (I−1)−ςσ2uξ
+(I+1)+ςσ2uξ is between 0 and 1, and thus it is increasing in I. As a
+result, IC/I M is increasing in I.
+Proof for the mispricing EC. When θ = 0, by definition, the mispricing EC is
+EC =
+
+1 −λCIχC
+|vt −v|
+=
+
+1 −ξ−1I
+1
+(I + 1)ξ−1 + ςσ2u
+
+|vt −v|
+=
+1 + ςσ2
+uξ
+(I + 1) + ςσ2uξ |vt −v| .
+(IA.2.100)
+The mispricing in the perfect cartel benchmark, denoted by E M, is
+E M =
+
+1 −λMIχM
+|vt −v| =
+
+1 −ξ−1I ξ
+2I
+
+|vt −v| = |vt −v| /2.
+(IA.2.101)
+27
+
+
+=== OA PAGE 28 ===
+Thus, EC/E M is equal to
+EC/E M = 2
+
+1 + ςσ2
+uξ
+(I + 1) + ςσ2uξ
+
+.
+(IA.2.102)
+Clearly, EC/E M is not affected by ρ at all, and it is increasing in σ2
+u, because
+1+ςσ2uξ
+(I+1)+ςσ2uξ is between
+0 and 1. It is straightforward to see that EC/E M is decreasing in I.
+Proof for the market liquidity LC. By definition, the market liquidity LC is
+LC =
+1
+∂|zt + yt|/∂ut
+=
+1
+1 −ξλC .
+(IA.2.103)
+Because θ/ξ ≈0, the market liquidity LC can be expressed as follows:
+LC =
+1
+1 −ξ θγC+ξ
+θ+ξ2
+
+≈
+1
+1 −ξ θγC+ξ
+ξ2
+
+=
+ξ
+θγC = ξ
+θ
+
+IχC + σ2
+u
+σ2v
+1
+IχC
+
+.
+(IA.2.104)
+The market liquidity in the perfect cartel benchmark, LM, is
+LM = ξ
+θ
+
+IχM + σ2
+u
+σ2v
+1
+IχM
+
+= ξ
+θ
+ 
+I ξ
+2I + σ2
+u
+σ2v
+1
+I ξ
+2I
+!
+= 1
+θ
+ξ2
+2 + 2σ2
+u
+σ2v
+
+.
+(IA.2.105)
+Thus, the relative market liquidity LC/LM can be expressed as follows:
+LC
+LM =
+IχC + σ2u
+σ2v
+1
+IχC
+ξ
+2 + σ2u
+σ2v
+2
+ξ
+.
+(IA.2.106)
+Given that ςσ2
+uξ < I −1, it follows that when θ/ξ ≈0 and σu/σv is sufficiently small, LC/LM can
+be further simplified as:
+LC
+LM ≈2ξ−1IχC =
+2I
+(I + 1) + ςσ2uξ .
+(IA.2.107)
+Thus, it is straightforward to see that LC/LM is increasing in I and decreasing in σ2
+u. Clearly,
+LC/LM is independent of ρ.
+3
+Heuristic Justifications and Intuitions for AI Equilibria
+In this subsection, we present intuitions and heuristic proofs on how interactions among Q-
+learning algorithms may or may not lead to a collusive trading equilibrium, sustained by one of
+the two distinct mechanisms examined in Section 5, in various trading environments. A heuristic
+proof refers to an argument or reasoning that offers an intuitive explanation for a result, often
+relying on approximations or informal reasoning rather than strict mathematical rigor.
+28
+
+
+=== OA PAGE 29 ===
+To capture the key ideas, we assume each informed speculator selects between two strategies:
+the non-collusive Nash equilibrium strategy, χN, and a more conservative alternative, χC. Specif-
+ically, our discussion on intuitions and heuristic proofs is based on a simple model with I = 2
+and X = {χN, χC}. For simplicity, we also set vt ≡v + σv, with σv normalized to 1 throughout
+this paper. These assumptions make Q-learning speculators’ behavior semi-tractable analytically,
+allowing us to heuristically characterize the properties of the steady state. In this case, the steady
+state arises from interactions and learning among multiple Q-learning speculators, manifesting
+as either (i) an AI collusive equilibrium sustained by price-trigger strategies, (ii) an AI collusive
+equilibrium sustained by over-pruning bias in learning, or (iii) the non-collusive Nash equilibrium.
+We emphasize that, in general, deriving theoretical convergence results for multiple interacting Q-
+learning algorithms is extremely difficult, which makes it even more challenging to gain analytical
+insights into the properties of their steady states.
+We first consider the case where ξ is not close to zero, relative to θ, with two sub-scenarios:
+one where σu is low and one where σu is high. In the first sub-scenario, with low σu, informed AI
+speculators using Q-learning algorithms can learn price-trigger strategies to collude. However,
+achieving an AI collusive equilibrium sustained by over-pruning bias in learning is impossible in
+this case. In the second sub-scenario, with high σu, informed AI speculators can reach and sustain
+an AI collusive equilibrium due to over-pruning bias in learning, but they cannot learn to achieve
+an AI collusive equilibrium sustained by price-trigger strategies.
+Next, we examine the case where ξ is close to zero relative to θ, regardless of the level of σu. In
+this scenario, informed AI speculators using Q-learning algorithms can reach and sustain an AI
+collusive equilibrium, where the conservative trading strategy χC is chosen due to over-pruning
+bias in learning, regardless of the level of noise trading risk σu. However, they cannot sustain a
+collusive equilibrium with χC chosen due to price-trigger strategies, irrespective of σu.
+To elaborate further, the so-called “AI collusive equilibrium” is fundamentally connected to
+the theoretical concept of collusive equilibrium formalized in Definition 3.1 in Section 3.2 and
+Definitions 3.2 and 3.3 in Section 3.3 of the main text. However, these AI equilibria are reached
+and sustained through algorithmic mechanisms rather than theoretical assumptions or economic
+reasoning.
+3.1
+Significant Presence of Information-Insensitive Investors (i.e., Large ξ)
+We consider the case where ξ is not close to zero, relative to θ, indicating a significant presence of
+information-insensitive investors, and thus a negligible effect of pricing error minimization in the
+market maker’s objective, as specified in (IA.2.5). For transparency, we assume without loss of
+generality that θ = 0. Thus,
+χC < χN ≡ξ/3
+and
+χC > χM ≡ξ/4.
+(IA.3.1)
+29
+
+
+=== OA PAGE 30 ===
+Let the focal speculator be i, and the other speculator is denoted by −i. At t, the market price, pt,
+is
+pt =
+
+
+
+
+
+pN
+t ≡v + 2ξ−1χN + ξ−1ut,
+if (χi, χ−i) = (χN, χN),
+pC
+t ≡v + 2ξ−1χC + ξ−1ut,
+if (χi, χ−i) = (χC, χC),
+pD
+t ≡v + ξ−1(χN + χC) + ξ−1ut,
+otherwise,
+(IA.3.2)
+and the trading profit for speculator i is πi,t =
+
+1 −ξ−1(χi,t + χ−i,t)
+
+χi,t −ξ−1χi,tut, where
+πi,t =
+
+
+
+
+
+
+
+
+
+
+
+πNN −ξ−1χNut, with πNN =
+ 1 −2ξ−1χN
+χN,
+if (χi, χ−i) = (χN, χN),
+πCC −ξ−1χCut, with πCC =
+ 1 −2ξ−1χC
+χC,
+if (χi, χ−i) = (χC, χC),
+πCN −ξ−1χCut, with πCN =
+
+1 −ξ−1(χC + χN)
+
+χC,
+if (χi, χ−i) = (χC, χN),
+πNC −ξ−1χNut, with πNC =
+
+1 −ξ−1(χC + χN)
+
+χN,
+if (χi, χ−i) = (χN, χC).
+(IA.3.3)
+It is straightforward to show that pC
+t < pD
+t < pN
+t . The following inequalities hold
+πCN < πNN < πCC < πNC, and
+πCN + πCC < πNN + πNC.
+(IA.3.4)
+The inequality (IA.3.4) can be shown as follows:
+πNN + πNC −(πCN + πCC) = (χN −χC)
+h
+2 −3ξ−1(χN + χC)
+i
+(IA.3.5)
+> (χN −χC)
+h
+2 −3ξ−1(χN + χN)
+i
+= 0.
+(IA.3.6)
+The simplified model, with a significant presence of information-insensitive investors, essentially
+resembles a prisoner’s dilemma game in product market competition, where a “nature” player
+submits demand with an amount randomly drawn from a zero-mean normal distribution.
+In the presence of a significant force of information-insensitive investors, that is, when ξ is not
+close to zero, relative to θ, we first demonstrate in Section 3.1.1 how an AI collusive equilibrium
+driven by price-trigger strategies can robustly arise in a low-noise trading environment. Conversely,
+we explain why an AI collusive equilibrium sustained by over-pruning bias in learning cannot arise
+in the same trading environment. In Section 3.1.2, we then show how an AI collusive equilibrium
+sustained by over-pruning bias in learning can arise in a high-noise trading environment, while no
+collusive equilibrium driven by price-trigger strategies can occur in the same trading environment.
+These findings confirm the results of our simulations, particularly those illustrated in Figure 2 of
+the main text.
+3.1.1
+Low Noise Trading Risk σu with Large ξ
+We first consider the case where σu is low. For illustrative purposes, we assume σu = 0, meaning
+monitoring is perfect. Although rigorous mathematical proofs for the convergence of multiple
+30
+
+
+=== OA PAGE 31 ===
+Q-learning algorithms in this simplified model have been demonstrated (e.g., Cartea et al., 2022;
+Possnig, 2024), they offer little in terms of intuitive explanation or insight, relying mainly on
+the application of stochastic approximation results. Specifically, these proofs for the simplified
+model depend on directly applying existing results in stochastic approximation, which primarily
+involves verifying high-level regularity conditions and emphasizes technical details. As a result,
+they lack intuitive insights. Our heuristic proofs add significant value by providing clear intuition
+behind the convergence of multiple Q-learning algorithms, which can be extended to more general
+settings, as outlined in our main model, even though we use this simplified model for illustration.
+In this scenario, the market price in (IA.3.2) becomes
+pt =
+
+
+
+
+
+pN ≡v + 2ξ−1χN,
+if (χi, χ−i) = (χN, χN),
+pC ≡v + 2ξ−1χC,
+if (χi, χ−i) = (χC, χC),
+pD
+t ≡v + ξ−1(χN + χC),
+otherwise,
+(IA.3.7)
+and the trading profit in (IA.3.3) becomes
+πi,t =
+
+
+
+
+
+
+
+
+
+
+
+πNN =
+ 1 −2ξ−1χN
+χN,
+if (χi, χ−i) = (χN, χN),
+πCC =
+ 1 −2ξ−1χC
+χC,
+if (χi, χ−i) = (χC, χC),
+πCN =
+
+1 −ξ−1(χC + χN)
+
+χC,
+if (χi, χ−i) = (χC, χN),
+πNC =
+
+1 −ξ−1(χC + χN)
+
+χN,
+if (χi, χ−i) = (χN, χC).
+(IA.3.8)
+And, in this scenario, the state variable st can take one of three values: {pC, pN, pD}. To elaborate,
+based on the state variable st specification in Section 4.1, we define st = pC if and only if
+χ1,t−1 = χ2,t−1 = χC, st = pN if and only if χ1,t−1 = χ2,t−1 = χN, and st = pD in all other cases.
+According to the theoretical recursive relation of the Q-function in (2.3), the theoretical Q-
+function associated with the collusive equilibrium sustained by the price-trigger strategy under
+perfect monitoring with perpetual punishment, can be summarized as follows:
+If the state is s = pC,
+Qi(s, χC) = πCC
+1 −ρ, and Qi(s, χN) = πNC + ρπNN
+1 −ρ ,
+for i = 1, 2;
+(IA.3.9)
+if the state is s̸ = pC,
+Qi(s, χC) = πCN + ρπNN
+1 −ρ , and Qi(s, χN) = πNN
+1 −ρ,
+for i = 1, 2.
+(IA.3.10)
+Result 1:
+In a market environment where σu = 0 and ξ is large relative to θ, no AI collusive equilibrium
+sustained by over-pruning bias in learning can be achieved by multiple informed AI speculators using
+Q-learning algorithms.
+31
+
+
+=== OA PAGE 32 ===
+Below, we provide a heuristic justification for Result 1. Intuitively, in a low-noise trading
+environment, the exploration-exploitation tradeoff works effectively, avoiding severe over-pruning
+bias in learning. As a result, AI collusive equilibrium sustained by over-pruning bias in learning
+cannot be achieved or sustained by multiple informed AI speculators.
+In theory, this collusive experience-based equilibrium represents a steady state where informed
+speculators have learning bias that leads to an overvaluation of conservative trading strategies. In
+this equilibrium, Qi(s, χN) < Qi(s, χC) for all i = 1, 2 and all s, indicating that the conservative
+strategy χC is consistently preferred over the aggressive strategy χN, and Qi(s, χC) represents an
+on-path evaluation that satisfies the consistency condition of an experience-based equilibrium. As
+a result, the following holds:
+Qi(s, χC) = πCC
+1 −ρ, for i = 1, 2 and all s,
+(IA.3.11)
+and Qi(s, χN) can take arbitrary values as long as:
+Qi(s, χN) < πCC
+1 −ρ for i = 1, 2 and all s.
+(IA.3.12)
+Specifically, we prove Result 1 by contradiction. Assume that the system of multiple Q-learning
+algorithms converges to the collusive equilibrium sustained by learning bias, described above in
+(IA.3.11) and (IA.3.12). In this case, an AI collusive equilibrium sustained by over-pruning bias in
+learning would be achievable.
+Thus, after many iterations in the exploitation-intensive stage, the estimated Q-function bQi,t
+approaches its theoretical counterpart Qi, so that bQi,t(s, χN) < bQi(s, χC) for i = 1, 2 and all s, for
+sufficiently large t.
+What would bQi,t(s, χN) and bQi(s, χC) converge to in this scenario? During the exploitation-
+intensive stage, the following recursive relationship holds:
+bQi,tτ+1(pC, χC) = (1 −α) bQi,tτ(pC, χC) + α
+"
+πCC + ρ
+max
+χ∈{χC,χN}
+bQi,tτ(pC, χ)
+#
+(IA.3.13)
+where tτ is the index of the iteration in which i visits the state-and-action pair (pC, χC) for the
+τ-th time.
+For sufficiently large τ, given that χC is preferred over χN, the maximum value simplifies to
+bQi,tτ(pC, χC), and we have:
+bQi,tτ+1(pC, χC) = (1 −α + αρ) bQi,tτ(pC, χC) + απCC.
+(IA.3.14)
+Thus, as τ grows large, bQi,tτ(pC, χC) approaches πCC
+1 −ρ for i = 1, 2, described in (IA.3.11). Thus,
+32
+
+
+=== OA PAGE 33 ===
+bQi,t(pC, χC) approaches πCC
+1 −ρ, as t approaches infinity. Similarly, we can show that bQi,t(s, χC)
+approaches πCC
+1 −ρ, as t approaches infinity, for i = 1, 2 and all other s. During the exploitation-
+intensive stage, the following recursive relationship holds:
+bQi,tτ+1(pC, χN) = (1 −α) bQi,tτ(pC, χN) + α
+"
+πNC + ρ
+max
+χ∈{χC,χN}
+bQi,tτ(pD, χ)
+#
+(IA.3.15)
+where tτ is the index of the iteration in which i visits the state-and-action pair (pC, χN) for the
+τ-th time.
+For sufficiently large τ, given that χC is preferred over χN, the maximum value simplifies to
+bQi,tτ(pD, χC) ≈ρπCC
+1 −ρ , and we have:
+bQi,tτ+1(pC, χN) = (1 −α) bQi,tτ(pC, χN) + α
+h
+πNC + ρ bQi,tτ(pD, χC)
+i
+(IA.3.16)
+≈(1 −α) bQi,tτ(pC, χN) + α
+
+πNC + ρπCC
+1 −ρ
+
+.
+(IA.3.17)
+Thus, as τ grows large, bQi,tτ(pC, χN) approaches πNC + ρπCC
+1 −ρ for i = 1, 2. As a result, bQi,t(pC, χN)
+converges to the same value, πNC + ρπCC
+1 −ρ , for i = 1, 2, as t approaches infinity.
+Since πNC > πCC, as stated in (IA.3.4), it follows that bQi,t(pC, χN) > bQi(pC, χC) for both
+i = 1, 2. This contradicts the assumption that the system of multiple Q-learning algorithms
+converges to the AI collusive equilibrium sustained by over-pruning bias in learning. Therefore,
+by contradiction, we conclude that the collusive equilibrium sustained by over-pruning bias in
+learning cannot be achieved by multiple Q-learning algorithms when the noise trading risk σu is
+low.
+Result 2:
+In a market environment where σu = 0 and ξ is large relative to θ, an AI collusive equilibrium
+sustained by price-trigger strategies can be achieved by multiple informed AI speculators using Q-learning
+algorithms with a sufficiently small forgetting rate α.
+Below, we provide a heuristic proof and key intuitions for Result 2. By the nature of rein-
+forcement learning algorithms, both in the simple ε-greedy method in (4.3) of the main text and
+in more general exploitation-exploration trade-off specifications, random exploration dominates
+the early iterations, referred to as the “exploration-intensive stage” (Phase 1). As the explo-
+ration rate εt approaches zero, exploitation becomes dominant in the later iterations, marking the
+“exploitation-intensive stage” (Phase 2). After sufficient iterations in these first two stages, the
+system of estimated Q-functions bQi,t(s, χ) for i = 1, 2 stabilizes within a small neighborhood of
+the steady state. This is referred to as the “absorbing stage” (Phase 3).
+33
+
+
+=== OA PAGE 34 ===
+In line with the three phases described above, we illustrate the intuition behind the convergence
+process through the following three steps, consistent with the nature of reinforcement learning
+algorithms:
+Phase 1 (“The Exploration-Intensive Stage”): We provide a heuristic proof that, after a
+sufficient number of iterations in the exploration-intensive stage, it holds that bQi,t(s, χC) <
+bQi,t(s, χN) for all s, as shown below.
+When exploration dominates and exploitation is minimal, that is, εt ≈1, the two actions
+χC and χN are randomly chosen with equal probabilities in each iteration, regardless of
+the state variable s. As a result, the Q-learning algorithms behave as if they lack dynamic
+sophistication, not tracking any state variables. Consequently, the Q-functions do not depend
+on the state variable s after many iterations in the exploration-intensive stage. As a result, in
+this stage, when t is sufficiently large, for any state s, it holds that
+bQi,t(s, χC) < bQi,t(s, χN), for any state s,
+(IA.3.18)
+and specifically, it holds that
+bQi,t(s, χC) ≈πCC + πCN
+2
++ ρ(πNC + πNN)
+2(1 −ρ)
+, and
+(IA.3.19)
+bQi,t(s, χN) ≈πNC + πNN
+2(1 −ρ)
+.
+(IA.3.20)
+Below, we prove (IA.3.18) by contradiction. Suppose bQi,t(s, χC) ≥bQi,t(s, χN), for any state s.
+As a result, the following cumulative updates hold:
+bQi,tτ(s, χC) =
+τ−1
+∑
+h=0
+α(1 −α)h
+"
+DhπCC + (1 −Dh)πCN + ρ
+max
+χ∈{χC,χN}
+bQi,tτ−h(s, χ)
+#
+,
+(IA.3.21)
+=
+τ−1
+∑
+h=0
+α(1 −α)h h
+DhπCC + (1 −Dh)πCN + ρ bQi,tτ−h(s, χC)
+i
+,
+(IA.3.22)
+where tτ is the index of the iteration in which i visits the state-and-action pair (s, χN) for the
+τ-th time, and Dh are i.i.d. Bernoulli variables with mean 1/2, capturing random exploration.
+When τ is sufficiently large, there exists sufficiently large τ0 such that the following conditions
+are satisfied: (i) τ0 ≪τ, (ii) (1 −α)τ−τ0 is sufficiently tiny, and (iii) bQi,tτ′(s, χC) ≈bQi,tτ0(s, χC)
+for all τ′ ≥τ0 in the exploration-intensive stage, including iteration index τ. Therefore, the
+34
+
+
+=== OA PAGE 35 ===
+following approximation works:
+bQi,tτ(s, χC) =
+τ−τ0
+∑
+h=0
+α(1 −α)h h
+DhπCC + (1 −Dh)πCN + ρ bQi,tτ−h(s, χC)
+i
++
+τ−1
+∑
+h=τ−τ0+1
+α(1 −α)h h
+DhπCC + (1 −Dh)πCN + ρ bQi,tτ−h(s, χC)
+i
+(IA.3.23)
+≈
+τ−τ0
+∑
+h=0
+α(1 −α)h h
+DhπCC + (1 −Dh)πCN + ρ bQi,tτ(s, χC)
+i
+(IA.3.24)
+≈
+∞
+∑
+h=0
+α(1 −α)h h
+DhπCC + (1 −Dh)πCNi
++ ρ bQi,tτ(s, χC).
+(IA.3.25)
+Thus, it follows that
+bQi,tτ(s, χC) ≈
+1
+1 −ρ
+∞
+∑
+h=0
+α(1 −α)h h
+DhπCC + (1 −Dh)πCNi
+.
+(IA.3.26)
+To understand how the Law of Large Numbers (LLN) approximation applies to the right-
+hand side of equation (IA.3.26), we examine the following two terms:
+E
+"
+∞
+∑
+h=0
+α(1 −α)h h
+DhπCC + (1 −Dh)πCNi#
+= πCC + πCN
+2
+,
+(IA.3.27)
+var
+"
+∞
+∑
+h=0
+α(1 −α)h h
+DhπCC + (1 −Dh)πCNi#
+=
+α
+4(2 −α)
+
+πCC −πCN2
+.
+(IA.3.28)
+Applying Markov’s inequality, it follows from equations (IA.3.27) and (IA.3.28) that as α
+approaches zero, the following LLN approximation becomes increasingly accurate:
+∞
+∑
+h=0
+α(1 −α)h h
+DhπCC + (1 −Dh)πCNi
+≈πCC + πCN
+2
+.
+(IA.3.29)
+Since α is small, the Law of Large Numbers implies that, as t becomes sufficiently large,
+bQi,t(s, χC) ≈
+1
+1 −ρ
+πCC + πCN
+2
+.
+(IA.3.30)
+35
+
+
+=== OA PAGE 36 ===
+In the meantime, we would have
+bQi,tτ(s, χN) =
+τ−1
+∑
+h=0
+α(1 −α)h
+"
+DhπNC + (1 −Dh)πNN + ρ
+max
+χ∈{χC,χN}
+bQi,tτ−h(s, χ)
+#
+(IA.3.31)
+=
+τ−1
+∑
+h=0
+α(1 −α)h h
+DhπNC + (1 −Dh)πNN + ρ bQi,tτ−h(s, χC)
+i
+(IA.3.32)
+=
+τ−τ0
+∑
+h=0
+α(1 −α)h h
+DhπNC + (1 −Dh)πNN + ρ bQi,tτ−h(s, χC)
+i
++
+τ−1
+∑
+h=τ−τ0+1
+α(1 −α)h h
+DhπNC + (1 −Dh)πNN + ρ bQi,tτ−h(s, χC)
+i
+(IA.3.33)
+≈
+τ−τ0
+∑
+h=0
+α(1 −α)h h
+DhπNC + (1 −Dh)πNN + ρ bQi,tτ(s, χC)
+i
+(IA.3.34)
+≈
+∞
+∑
+h=0
+α(1 −α)h h
+DhπNC + (1 −Dh)πNNi
++ ρ bQi,tτ(s, χC)
+(IA.3.35)
+≈
+∞
+∑
+h=0
+α(1 −α)h h
+DhπNC + (1 −Dh)πNNi
++
+ρ
+1 −ρ
+πCC + πCN
+2
+.
+(IA.3.36)
+where tτ is the index of the iteration in which i visits the state-and-action pair (s, χN) for the
+τ-th time, and Dh are i.i.d. Bernoulli variables with mean 1/2, capturing random exploration.
+As α is small, the Law of Large Numbers implies that, as t is sufficiently large,
+bQi,t(s, χN) = πNC + πNN
+2
++
+ρ
+1 −ρ
+πCC + πCN
+2
+.
+(IA.3.37)
+Comparing (IA.3.30) with (IA.3.37), the inequality (IA.3.4) results in a contraction. Therefore,
+it follows that the inequalities in (IA.3.18) must hold after numerous iterations, by the end of
+the exploration-intensive stage.
+Given the inequalities in (IA.3.18), we now show that the results in (IA.3.19) and (IA.3.20)
+hold. The following relationship exists between the estimated Q-function and its cumulative
+updates from the past:
+bQi,tτ(s, χN) =
+τ−1
+∑
+h=0
+α(1 −α)h
+"
+DhπNC + (1 −Dh)πNN + ρ
+max
+χ∈{χC,χN}
+bQi,tτ−h(s, χ)
+#
+,
+(IA.3.38)
+=
+τ−1
+∑
+h=0
+α(1 −α)h h
+DhπNC + (1 −Dh)πNN + ρ bQi,tτ−h(s, χN)
+i
+,
+(IA.3.39)
+where tτ is the index of the iteration in which i visits the state-and-action pair (s, χN)
+for the τ-th time, and Dh are i.i.d. Bernoulli variables with mean 1/2, capturing random
+36
+
+
+=== OA PAGE 37 ===
+exploration. When τ is sufficiently large, there exists sufficiently large τ0 such that the
+following conditions are satisfied: (i) τ0 ≪τ, (ii) (1 −α)τ−τ0 is sufficiently tiny, and (iii)
+bQi,tτ′(s, χN) ≈bQi,tτ0(s, χN) for all τ′ ≥τ0, including iteration index τ. Thus, the following
+approximation works:
+bQi,tτ(s, χN) =
+τ−τ0
+∑
+h=0
+α(1 −α)h h
+DhπNC + (1 −Dh)πNN + ρ bQi,tτ−h(s, χN)
+i
++
+τ
+∑
+h=τ−τ0+1
+α(1 −α)h h
+DhπNC + (1 −Dh)πNN + ρ bQi,tτ−h(s, χN)
+i
+(IA.3.40)
+≈
+τ−τ0
+∑
+h=0
+α(1 −α)h h
+DhπNC + (1 −Dh)πNN + ρ bQi,tτ(s, χN)
+i
+(IA.3.41)
+≈
+∞
+∑
+h=0
+α(1 −α)h h
+DhπNC + (1 −Dh)πNNi
++ ρ bQi,tτ(s, χN).
+(IA.3.42)
+Thus, it follows that
+bQi,tτ(s, χN) ≈
+1
+1 −ρ
+∞
+∑
+h=0
+α(1 −α)h h
+DhπNC + (1 −Dh)πNNi
+.
+(IA.3.43)
+Since α is small, the Law of Large Numbers implies that, as t becomes sufficiently large,
+bQi,t(s, χN) ≈
+1
+1 −ρ
+πNC + πNN
+2
+.
+(IA.3.44)
+With the result in (IA.3.20) established, we now demonstrate that the result in (IA.3.19) also
+holds. For sufficiently large τ, the Q-function for trading strategy χC is
+bQi,tτ(s, χC) =
+τ−1
+∑
+h=0
+α(1 −α)h
+"
+DhπCC + (1 −Dh)πCN + ρ
+max
+χ∈{χC,χN}
+bQi,tτ−h(s, χ)
+#
+(IA.3.45)
+=
+τ−1
+∑
+h=0
+α(1 −α)h h
+DhπCC + (1 −Dh)πCN + ρ bQi,tτ−h(s, χN)
+i
+(IA.3.46)
+≈
+∞
+∑
+h=0
+α(1 −α)h h
+DhπCC + (1 −Dh)πCNi
++ ρ bQi,tτ(s, χN)
+(IA.3.47)
+≈
+∞
+∑
+h=0
+α(1 −α)h h
+DhπCC + (1 −Dh)πCNi
++
+ρ
+1 −ρ
+πNC + πNN
+2
+.
+(IA.3.48)
+where tτ is the index of the iteration in which i visits the state-and-action pair (s, χC) for the
+τ-th time, and Dh are i.i.d. Bernoulli variables with mean 1/2, capturing random exploration.
+37
+
+
+=== OA PAGE 38 ===
+Since α is small, the Law of Large Numbers implies that, as t becomes sufficiently large,
+bQi,t(s, χC) ≈πCC + πCN
+2
++
+ρ
+1 −ρ
+πNC + πNN
+2
+.
+(IA.3.49)
+Phase 2 (“The Exploitation-Intensive Stage”): After many iterations in the exploration-
+intensive stage, Phase 1 achieves convergence with the estimated Q-functions stabilizing
+around the limits in (IA.3.19) and (IA.3.20). We now show that as the algorithms transition
+to Phase 2, the estimated Q-function bQi,t converges toward the true Q-function Qi for
+i = 1, 2, after many iterations of exploitation during the exploitation-intensive stage, where
+the exploration rate is near zero (i.e., εt ≈0). Notably, this convergence is driven by the
+reinforcing nature of the algorithms.
+We show that, in the exploitation-intensive stage with εt ≈0, the estimated Q-functions
+converge to their true counterparts, specified in equations (IA.3.9) and (IA.3.10), after
+numerous iterations of exploitation. Below, we first consider the four cases with st̸ = pC:
+– When the state is st = pN and χi,t = χN, the other speculator, −i, will also choose
+strategy χN based on exploitation, as it was favored over χC after numerous explorations
+in Phase 1. As a result, the state in the next iteration remains st+1 = pN, leading to the
+following update:
+bQi,tτ+1(pN, χN) = (1 −α) bQi,tτ(pN, χN) + α
+"
+πNN + ρ
+max
+χ∈{χC,χN}
+bQi,tτ(pN, χ)
+#
+(IA.3.50)
+= (1 −α + αρ) bQi,tτ(pN, χN) + απNN,
+(IA.3.51)
+where tτ is the index of the iteration in which i visits the state-and-action pair (pN, χN).
+As τ increases, bQi,tτ(pN, χN) converges to Qi(pN, χN) ≡πNN
+1 −ρ for i = 1, 2, as described
+in (IA.3.10). Therefore, bQi,t(pN, χN) approaches πNN
+1 −ρ for both i = 1, 2 as t approaches
+infinity.
+– When the state is st = pD and χi,t = χN, the other speculator, −i, following the rule of
+exploitation, will also choose strategy χN, as it was favored over χC after numerous
+explorations in Phase 1. Consequently, the state in the next iteration becomes st+1 = pN,
+38
+
+
+=== OA PAGE 39 ===
+leading to the following update:
+bQi,tτ+1(pD, χN) = (1 −α) bQi,tτ(pD, χN) + α
+"
+πNN + ρ
+max
+χ∈{χC,χN}
+bQi,tτ(pN, χ)
+#
+(IA.3.52)
+= (1 −α) bQi,tτ(pD, χN) + α
+h
+πNN + ρ bQi,tτ(pN, χN)
+i
+(IA.3.53)
+≈(1 −α) bQi,tτ(pD, χN) + α
+
+πNN + ρ πNN
+1 −ρ
+
+,
+(IA.3.54)
+where tτ is the index of the iteration in which i visits the state-and-action pair (pD, χN).
+As τ grows large, bQi,tτ(pD, χN) approaches Qi(pD, χN) ≡πNN
+1 −ρ for i = 1, 2, as described
+in (IA.3.10). Thus, bQi,t(pD, χN) approaches πNN
+1 −ρ for i = 1, 2, as t approaches infinity.
+– When the state is st = pN and χi,t = χC, the other speculator, −i, following the rule
+of exploitation, will continue to choose strategy χN, as it was favored over χC after
+numerous explorations in Phase 1. Consequently, the state in the next iteration becomes
+st+1 = pD, leading to the following update:
+bQi,tτ+1(pN, χC) = (1 −α) bQi,tτ(pN, χC) + α
+"
+πCN + ρ
+max
+χ∈{χC,χN}
+bQi,tτ(pD, χ)
+#
+(IA.3.55)
+= (1 −α) bQi,tτ(pN, χC) + α
+h
+πCN + ρ bQi,tτ(pD, χN)
+i
+(IA.3.56)
+≈(1 −α) bQi,tτ(pN, χC) + α
+
+πCN + ρ πNN
+1 −ρ
+
+,
+(IA.3.57)
+where tτ is the index of the iteration in which i visits the state-and-action pair (pN, χC).
+As τ grows large, bQi,tτ(pN, χC) approaches Qi(pN, χC) ≡πCN + ρπNN
+1 −ρ for i = 1, 2, as
+described in (IA.3.10). Thus, bQi,t(pN, χC) approaches πCN + ρπNN
+1 −ρ for i = 1, 2, as t
+approaches infinity.
+– When the state is st = pD and χi,t = χC, the other speculator −i, following the rule
+of exploitation, will choose strategy χN, as it was favored over χC after numerous
+explorations in Phase 1. Consequently, the state in the next iteration becomes st+1 = pD,
+leading to the following update:
+bQi,tτ+1(pD, χC) = (1 −α) bQi,tτ(pD, χC) + α
+"
+πCN + ρ
+max
+χ∈{χC,χN}
+bQi,tτ(pD, χ)
+#
+(IA.3.58)
+= (1 −α) bQi,tτ(pD, χC) + α
+h
+πCN + ρ bQi,tτ(pD, χN)
+i
+(IA.3.59)
+≈(1 −α) bQi,tτ(pD, χC) + α
+
+πCN + ρ πNN
+1 −ρ
+
+,
+(IA.3.60)
+39
+
+
+=== OA PAGE 40 ===
+where tτ is the index of the iteration in which i visits the state-and-action pair (pD, χC).
+As τ grows large, bQi,tτ(pD, χC) approaches Qi(pD, χC) ≡πCN + ρπNN
+1 −ρ for i = 1, 2, as
+described in (IA.3.10). Thus, bQi,t(pD, χC) approaches πCN + ρπNN
+1 −ρ for i = 1, 2, as t
+approaches infinity.
+Now, we consider the case where the state is st = pC. We first show that there must
+exist some tC such that bQi,tC(pC, χC) > bQi,tC(pC, χN) for both i = 1, 2. We then show that,
+if this condition holds, for any t > tC, the state pC and the associated optimal strategy
+χC will continue to be reinforced during the exploitation-intensive stage (Phase 2). This
+reinforcement enables the estimated Q-functions at state pC for both actions χC and χN,
+denoted by bQi,t(pC, χC) and bQi,t(pC, χN), to converge toward the theoretical values Qi(pC, χC)
+and Qi(pC, χN), respectively, defined in (IA.3.9), as t approaches infinity. Combining the
+convergence results for Q-functions evaluated at state pC (derived below) with those at
+pD and pN (derived above in (IA.3.50) to (IA.3.60)), we find that informed AI speculators
+using Q-learning algorithms reach and maintain an AI collusive equilibrium, sustained by
+price-trigger strategies. This occurs because χC is the optimal strategy at state pC, which
+keeps the system in pC. If one informed AI speculator deviates from χC to χN, the state
+shifts from pC to pD, where χN becomes the optimal strategy, eventually leading the system
+to state pN in subsequent periods.
+– We first show that there must exist some tC such that bQi,tC(pC, χC) > bQi,tC(pC, χN) for
+both i = 1, 2. As the system of Q-learning algorithms transitions from the exploration-
+intensive stage (Phase 1) to Phase 2, both speculators have bQi,t(pC, χC) < bQi,t(pC, χN)
+at every t in the beginning of the exploitation-intensive stage (Phase 2). Thus, for each
+i = 1, 2, we have:
+bQi,tτ+1(pC, χN) = (1 −α) bQi,tτ(pC, χN) + α
+"
+πNN + ρ
+max
+χ∈{χC,χN}
+bQi,tτ(pN, χ)
+#
+(IA.3.61)
+= (1 −α) bQi,tτ(pC, χN) + α
+h
+πNN + ρ bQi,tτ(pN, χN)
+i
+(IA.3.62)
+≈(1 −α) bQi,tτ(pC, χN) + α
+
+πNN + ρ πNN
+1 −ρ
+
+,
+(IA.3.63)
+where tτ is the index of the iteration in which speculator i visits the state-and-action
+pair (pC, χN) for the τ-th time. In this case, (pC, χC) would be insufficiently, even
+rarely, updated from the beginning of the exploitation-intensive stage (Phase 2) for
+both i = 1, 2. Consequently, bQi,t(pC, χC) would be remain close to its initial value at the
+beginning of the exploitation-intensive stage (Phase 2), as given by equation (IA.3.49),
+40
+
+
+=== OA PAGE 41 ===
+which implies that
+bQi,t(pC, χC) ≈πCC + πCN
+2
++ ρ(πNC + πNN)
+2(1 −ρ)
+,
+(IA.3.64)
+which is strictly greater than bQi,t(pC, χN) ≈πNN
+1 −ρ, derived from (IA.3.63), for sufficiently
+large t. This is true because πNC > πNN and
+πCC + πCN −2πNN =
+
+1 −2ξ−1χC
+χC +
+h
+1 −ξ−1(χC + χN)
+i
+χC −2
+
+1 −2ξ−1χN
+χN
+= (χN −χC)
+
+4ξ−1χN + 3ξ−1χC −2
+
+(IA.3.65)
+≥(χN −χC)
+
+4ξ−1χN + 3ξ−1χM −2
+
+(due to (IA.3.1))
+(IA.3.66)
+= (χN −χC)
+4
+3 + 3
+4 −2
+
+> 0.
+(IA.3.67)
+Therefore, after many iterations from the starting point of the exploitation-intensive
+stage (Phase 2), the estimated Q-value bQi,t(pC, χN) will become lower than bQi,t(pC, χC).
+This shift in Q-values will lead both speculators to increasingly prefer χC over χN at the
+state pC. The exploitation iterations will further reinforce this preference, as illustrated
+by the following process.
+– We next show that, if there exists tC such that bQi,tC(pC, χC) > bQi,tC(pC, χN) for both
+i = 1, 2, the state pC and the associated optimal strategy χC will continue to be reinforced
+during the exploitation-intensive stage (Phase 2) for any t > tC. Consequently, the
+system of Q-learning algorithms converges to a collusive equilibrium sustained by
+price-trigger strategies, as t approaches infinity.
+Because Q-functions and profits are bounded, once the system reaches tC, where
+bQi,tC(pC, χC) > bQi,tC(pC, χN),
+for both i = 1, 2,
+(IA.3.68)
+a substantial number of updates at state pC would be required to reverse any of these
+inequalities, if reversal is possible at all, particularly with a sufficiently small forgetting
+rate α.3
+To elaborate further, given that Q-functions and profits are bounded, they are unlikely to
+3From this point, we observe that a small α plays two critical roles in the convergence of multiple Q-learning
+algorithms. First, it ensures that the Law of Large Numbers holds as a reasonable approximation during the
+exploration-intensive stage (Phase 1), allowing the algorithms to accurately learn the ranking of all strategies without
+considering collusive equilibria based on past behavior, as previously emphasized. Second, it facilitates convergence
+to a collusive equilibrium sustained by price-trigger strategies in the exploitation-intensive stage (Phase 2), where
+the focus shifts to exploiting the strategies that have been learned and correcting over-estimated Q-values of the
+aggressive trading strategy χN in the state pC.
+41
+
+
+=== OA PAGE 42 ===
+change much in the short run. Once χC becomes the better choice in state pC, that pref-
+erence tends to persist and gets reinforced over time. Reversing the inequality (IA.3.68),
+i.e., reaching a point t where bQi,t(pC, χN) might become greater than bQi,t(pC, χC) again,
+would require an exceptionally large number of updates to the Q-functions at state
+pC. This is especially true when the forgetting rate, α, is sufficiently small. A small α
+restricts the rate at which recent experiences influence the Q-values, thereby making
+Q-values slow moving and insensitive to individual updates. Consequently, once the
+inequality in favor of χC is established, it is likely to remain for a prolonged period, or
+potentially indefinitely, as the system continues to reinforce the choice of χC at state pC.
+In fact, before any possible reversal of the inequalities in (IA.3.68) could happen, the
+system would already be effectively “locked” in the state pC, with both speculators
+choosing strategy χC as the optimal strategy due to the following Q-learning recursive
+relationship:
+bQi,tτ+1(pC, χC) = (1 −α) bQi,tτ(pC, χC) + α
+"
+πCC + ρ
+max
+χ∈{χC,χN}
+bQi,tτ(pC, χ)
+#
+(IA.3.69)
+= (1 −α) bQi,tτ(pC, χC) + α
+h
+πCC + ρ bQi,tτ(pC, χC)
+i
+(IA.3.70)
+= (1 −α + αρ) bQi,tτ(pC, χC) + απCC,
+(IA.3.71)
+where tτ is the index of the iteration in which i visits the state-and-action pair (pC, χC)
+for the τ-th time. As τ grows large, bQi,tτ(pC, χC) approaches Qi(pC, χC) ≡πCC
+1 −ρ for
+i = 1, 2, as described in (IA.3.9). Thus, bQi,t(pC, χC) approaches πCC
+1 −ρ for i = 1, 2, as t
+approaches infinity.
+As a consequence of the convergence result for bQi,t(pC, χC) discussed above, the follow-
+ing convergence result for bQi,t(pC, χN) also holds after sufficiently many iterations in
+the exploitation-intensive stage (Phase 2):
+bQi,tτ+1(pC, χN) = (1 −α) bQi,tτ(pC, χN) + α
+"
+πNC + ρ
+max
+χ∈{χC,χN}
+bQi,tτ(pD, χ)
+#
+(IA.3.72)
+= (1 −α) bQi,tτ(pC, χN) + α
+h
+πNC + ρ bQi,tτ(pD, χN)
+i
+(IA.3.73)
+≈(1 −α) bQi,tτ(pC, χN) + α
+
+πNC + ρπNN
+1 −ρ
+
+,
+(IA.3.74)
+where tτ is the index of the iteration in which i visits the state-and-action pair (pC, χN)
+for the τ-th time. As τ grows large, bQi,tτ(pC, χN) approaches Qi(pC, χN) ≡πNC +
+ρπNN
+1 −ρ for i = 1, 2, as described in (IA.3.9). Thus, bQi,t(pC, χN) approaches πNC + ρπNN
+1 −ρ
+for i = 1, 2, as t approaches infinity.
+42
+
+
+=== OA PAGE 43 ===
+In summary, we have shown that bQi,t(pC, χC) ≈πCC
+1 −ρ as t approaches infinity, and
+bQi,t(pC, χN) ≈πNC + ρπNN
+1 −ρ as t approaches infinity. Since πCC
+1 −ρ is significantly greater
+than πNC + ρπNN
+1 −ρ as long as the discount factor ρ is sufficiently close to 1, the system of
+multiple Q-learning algorithms will converge to the long-run steady state where χC is
+preferred over χN at state pC (i.e., bQi,t(pC, χC) > bQi,t(pC, χN) for any sufficiently large
+t). This inequality will hold consistently, preventing any reversion of the inequalities in
+(IA.3.68).
+Phase 3 (“The Absorbing Stage”): Finally, we show that the collusive equilibrium, sustained
+by the price-trigger strategy under perfect monitoring, constitutes the long-run steady state
+of the multi-agent Q-learning system and, importantly, is stable. Specifically, in what follows,
+we show that, once bQi,t reaches a small neighborhood of the theoretical Q-function Qi for all
+i = 1, 2, described in (IA.3.9) and (IA.3.10), the system remains within this neighborhood
+permanently.4
+To be more specific, we show that, once bQi,t(s, χ) = Qi(s, χ) + Ui,t(s, χ) with |Ui,t(s, χ)| < δ
+for all s, χ, and i, for some arbitrarily small δ > 0, the asynchronous update in Q-learning
+algorithms ensures that bQi,t+1(s, χ) = Qi(s, χ) + Ui,t+1(s, χ) with |Ui,t+1(s, χ)| < δ for all s,
+χ, and i. Below, we illustrate the case for (pC, χC), with similar arguments applying to all
+other cases. If (pC, χC) is not updated for speculator i in the iteration t, the claim is obviously
+true. If (pC, χC) is updated for speculator i in the iteration t, according to the Q-learning
+recursive relationship, we have
+bQi,t+1(pC, χC) = (1 −α) bQi,t(pC, χC) + α
+"
+πCC + ρ
+max
+χ∈{χC,χN}
+bQi,t(pC, χ)
+#
+(IA.3.75)
+= (1 −α) bQi,t(pC, χC) + α
+h
+πCC + ρ bQi,t(pC, χC)
+i
+(IA.3.76)
+= (1 −α + αρ)
+h
+Qi(pC, χC) + Ui,t(pC, χC)
+i
++ απCC
+(IA.3.77)
+= Qi(pC, χC) + Ui,t+1(pC, χC),
+(IA.3.78)
+where Ui,t+1(pC, χC) ≡(1 −α + αρ)Ui,t(pC, χC). Therefore, it holds that
+|Ui,t+1(pC, χC)| = (1 −α + αρ)|Ui,t(pC, χC)| < δ.
+(IA.3.79)
+4This demonstrates that the collusive equilibrium, sustained by the price-trigger strategy under perfect monitoring
+with perpetual punishment, can be achieved by multiple Q-learning algorithms through effective learning, rather than
+insufficient learning, despite the theoretical stochastic instability of the limiting equilibrium. The convergence remains
+approximate when the forgetting rate α is a small constant, rather than decaying to zero over the iterations. The key is
+that, with any finite number of iterations, small but positive approximation errors and exploration rates lead to an AI
+equilibrium with limited punishment for deviations, ensuring stochastic stability throughout the learning process,
+even if not for the limiting equilibrium.
+43
+
+
+=== OA PAGE 44 ===
+3.1.2
+High Noise Trading Risk σu with Large ξ
+Result 3:
+In a market environment characterized by a high σu and a large ξ relative to θ, no AI collusive
+equilibrium sustained by price-trigger strategies can be achieved by multiple informed AI speculators using
+Q-learning algorithms.
+When σu is high, the state variable pt becomes very noisy, providing little useful information
+for the Q-learning algorithms to track. Consequently, the algorithms learn to make optimal
+decisions with minimal reliance on the state variables, effectively behaving as if no state variable
+is being used. In this scenario, the optimization problem becomes static, and the Q-learning
+algorithms operate more like bandit algorithms, lacking dynamic sophistication. When price is not
+an informative state variable, the mechanism behind price-trigger strategies becomes ineffective,
+as the state variable pt is now primarily driven by noise trading flows ut rather than by the
+trading behavior of informed AI speculators. As a result, no AI collusive equilibrium sustained
+by price-trigger strategies can be achieved by multiple informed AI speculators using Q-learning
+algorithms when σu is high, even if ξ is large.
+Result 4:
+In a market environment characterized by a high σu and a large ξ relative to θ, an AI collusive
+equilibrium sustained by over-pruning bias in learning can be achieved by multiple informed AI speculators
+using Q-learning algorithms.
+While AI collusion via price-trigger strategies is infeasible in this scenario, an alternative
+mechanism for AI-driven collusion emerges. High noise trading risk disrupts the exploration-
+exploitation tradeoff, a critical factor for effective learning in reinforcement learning algorithms
+like Q-learning. In scenarios with high noise trading risk, where Q-learning algorithms become
+effectively static, we assume without loss of generality that ρ = 0. Thus, bQi,t(χ) follows the
+recursive relation:
+bQi,t+1(χi,t) = (1 −α) bQi,t(χi,t) + απi,t,
+(IA.3.80)
+where πi,t is defined in (IA.3.3) and
+χi,t =
+(
+argmaxχ∈{χC,χN} bQi,t(χ),
+with probability 1 −εt
+randomly drawn from {χC, χN},
+with probability εt.
+(IA.3.81)
+In line with the three phases described in Online Appendix 3.1.1, we illustrate the intuition
+behind the convergence process through the following three steps, consistent with the nature of
+reinforcement learning algorithms:
+Phase 1 (“The Exploration-Intensive Stage”): We provide a heuristic proof that, after many
+iterations during the exploration-intensive stage with εt ≈1, the Q-function values bQi,t(χC)
+44
+
+
+=== OA PAGE 45 ===
+and bQi,t(χN) are
+bQi,tτ(χC) =
+τ−1
+∑
+h=0
+α(1 −α)h h
+DhπCC + (1 −Dh)πCN −ξ−1χCutC
+τ−h
+i
+, and
+(IA.3.82)
+bQi,tτ(χN) =
+τ−1
+∑
+h=0
+α(1 −α)h h
+DhπNN + (1 −Dh)πNC −ξ−1χNutN
+τ−h
+i
+,
+(IA.3.83)
+where tC
+τ and tN
+τ denote the indices of the iterations when the actions χC and χN are visited
+for the τ-th time, and Dh are i.i.d. Bernoulli variables with mean 1/2, capturing random
+exploration. Thus, given a sufficiently small α, the Law of Large Numbers provides the
+following approximations:
+bQi,t(χC) ≈πCC + πCN
+2
+−ξ−1χC
+ ασ2
+u
+2 −α
+1/2
+zC,
+(IA.3.84)
+bQi,t(χN) ≈πNC + πNN
+2
+−ξ−1χN
+ ασ2
+u
+2 −α
+1/2
+zN,
+(IA.3.85)
+where zC and zN are independent standard normal random variables, defined as follows:
+zC ≡
+ ασ2
+u
+2 −α
+−1/2 ∞
+∑
+h=0
+utC
+τ−h,
+(IA.3.86)
+zN ≡
+ ασ2
+u
+2 −α
+−1/2 ∞
+∑
+h=0
+utN
+τ−h.
+(IA.3.87)
+To further elaborate on the derivation of the approximations in (IA.3.84) – (IA.3.87) above, let
+us focus on bQi,t(χC) as an illustrative example. Similar to the proof for (IA.3.29), it follows
+that
+τ−1
+∑
+h=0
+α(1 −α)h h
+DhπCC + (1 −Dh)πCNi
+≈πCC + πCN
+2
+.
+(IA.3.88)
+In addition, it holds that
+τ−1
+∑
+h=0
+α(1 −α)hutC
+τ−h is a normal random variable with zero mean and variance ασ2
+u
+2 −α.
+Importantly, when σu is sufficiently large with α kept constant, the noise terms in (IA.3.84)
+and (IA.3.85) dominate the constant terms. Consequently, unlike in a low-noise trading
+environment, intensive exploration does not guide Q-learning algorithms toward adopting
+or learning aggressive trading strategies. However, we emphasize that, if α is sufficiently
+close to zero, even with a large σu, the constant terms in (IA.3.84) and (IA.3.85) may still
+dominate the noise terms. As a result, even in a high-noise trading environment, as long
+45
+
+
+=== OA PAGE 46 ===
+as α is sufficiently small, intensive exploration does guide Q-learning algorithms toward
+aggressive trading strategies, which is consistent with our simulation experimental results
+discussed in Figure IA.9 of the main text.
+Phase 2 (“The Exploitation-Intensive Stage”): From (IA.3.82) – (IA.3.85), it is clear that
+aggressive trading behavior, χN, is particularly vulnerable to poor trading outcomes driven
+by large noise trading flows moving in the same direction (i.e., when ut is highly positive).
+In these cases, the algorithm “labels” χN as “disastrous action,” meaning that the estimated
+Q-value, bQi,t+1(χN), is updated to a level significantly lower than bQi,t+1(χC).
+As a result, during the exploitation-intensive stage, the algorithm is strongly discouraged
+from revisiting χN, effectively pruning χN from the learning process and causing it to
+remain persistently undervalued. In other words, when noise trading risk σu is high, the
+Q-learning system becomes excessively noisy, amplifying the potential learning bias caused
+by over-pruning during exploitation. At the same time, during the exploitation-intensive
+phase, exploration not only becomes infrequent but also ineffective when it occurs due to
+high noise. Taken together, the potential learning bias from exploitation cannot be fully
+corrected by exploration, disrupting the balance of the exploration-exploitation tradeoff.
+This imbalance leads to persistent over-pruning bias, where the agent’s policy prematurely
+converges to a suboptimal solution, ignoring other potentially beneficial strategies.
+To be more specific, suppose χN is initially preferred over χC for both informed AI speculators
+using Q-learning algorithms at the start of the exploitation-intensive stage (Phase 2). After
+many exploitation iterations during the beginning period of the exploitation-intensive stage
+(Phase 2), the estimated Q-values bQi,t(χN) for i = 1, 2 are
+bQi,t(χN) ≈πNN −ξ−1χN
+ ασ2
+u
+2 −α
+1/2
+zN,
+(IA.3.89)
+where zN is a standard normal variable. During the iterations of the exploitation-intensive
+stage (Stage 2), it is almost certain that a 3-standard-deviation positive noise trading flow
+(ut = 3) will occur when zN takes a high value (zN ≈3), corresponding to three standard
+deviations above the mean of a standard normal distribution. This event drives the Q-value
+46
+
+
+=== OA PAGE 47 ===
+of χN down to an excessively low level: for i = 1, 2, it holds that
+bQi,t+1(χN) = (1 −α) bQi,t(χN) + απi,t
+≈(1 −α)
+"
+πNN −3ξ−1χN
+ ασ2
+u
+2 −α
+1/2#
++ απi,t
+according to (IA.3.89)
+≈(1 −α)
+"
+πNN −3ξ−1χN
+ ασ2
+u
+2 −α
+1/2#
++ α
+h
+πNN −3ξ−1χNi
+according to (IA.3.3)
+= πNN −3(1 −α)ξ−1χN
+ ασ2
+u
+2 −α
+1/2
+−3αξ−1χN
+(IA.3.90)
+As a result, χC is likely to be preferred over χN following this large positive noise trading
+flow, leading the exploitation iterations to focus on updating the Q-value of χC:
+bQi,t(χC) ≈πCC −ξ−1χC
+ ασ2
+u
+2 −α
+1/2
+zC, for i = 1, 2,
+(IA.3.91)
+which can rarely go below bQi,t(χN) in (IA.3.90).
+On the other hand, when noise trading flows move in the opposite direction (i.e., with a highly
+negative ut), χN may temporarily yield exceptional profits. This will cause the algorithm to
+“label” χN as “favorable action,” meaning that the estimated Q-value, bQi,t+1(χN), is updated
+to a level significantly greater than bQi,t+1(χC). This inflation in its Q-value, relative to χC,
+leads to repeated reinforcement of χN. For instance, a 3-standard-deviation negative noise
+flow occurs (ut = −3) when zN takes a large negative value, say zN ≈−3, pushing the Q-
+value of χN to an excessively high level (following the same reasoning as the approximation
+in (IA.3.89)):
+bQi,t(χN) ≈πNN + 3(1 −α)ξ−1χN
+ ασ2
+u
+2 −α
+1/2
++ 3αξ−1χN, for i = 1, 2.
+(IA.3.92)
+In this way, the Q-value of χN can temporarily exceed that of χC, leading the algorithm to
+“label” χN as “favorable action” and reinforce its selection. However, over many iterations,
+this temporary inflation effect, represented by the last two terms on the right-hand side of
+(IA.3.92), will average out, resulting in the long-run Q-value for χN, specified in (IA.3.90).
+Taken together, the exploration-exploitation tradeoff in reinforcement learning parallels the
+bias-variance tradeoff in supervised learning and high-dimensional statistics. Both tradeoffs
+seek a balance between pruning the choice space5 and reducing the variability of the outcome.
+In reinforcement learning, exploring (i.e., trying new actions) is necessary to minimize bias in
+5The choice space varies across contexts: in reinforcement learning, it is the action space; in supervised learning
+and high-dimensional statistics, it is the parameter space (e.g., Hastie, Tibshirani and Friedman, 2009; Hall and
+Horowitz, 2007; Dou, Pollard and Zhou, 2012).
+47
+
+
+=== OA PAGE 48 ===
+estimating the optimal action, while exploiting (i.e., choosing believed optimal actions) helps
+reduce action and reward variability. Much like shrinkage techniques in supervised learning
+and dimensionality reduction in high-dimensional statistics, exploitation in reinforcement
+learning serves to prune the choice space, reducing variability and introducing a degree of
+bias to enhance learning efficiency overall.
+Exploitation asymmetrically influences the learning process when responding to adverse
+versus beneficial large noise trading shocks. After an adverse noise shock, the strategy chosen
+is often “marked” as “disastrous action,” with a very low estimated Q-value assigned to
+that strategy. Exploitation discourages the algorithm from revisiting this strategy, preventing
+the correction of biased evaluations for such off-equilibrium actions. Conversely, after a
+beneficial noise shock, the strategy is labeled “favorable action” and a very high estimated
+Q-value is assigned. Exploitation ensures the algorithm continues to play and update this
+chosen strategy, allowing any bias for this on-equilibrium-path action to be largely corrected.
+Because more aggressive strategies are significantly more susceptible to large adverse shocks,
+this asymmetry causes their persistent undervaluation. These aggressive strategies are
+prematurely pruned from the set of potential optimal strategies. In the case with large noise
+trading shocks, informed AI speculators using Q-learning algorithms eventually sustain
+conservative strategies after the learning process, which aligns with collusive trading behavior
+as defined in Definition 3.1.
+3.2
+Little Presence of Information-Insensitive Investors (i.e., Small ξ)
+We now consider the case with high price efficiency, that is, the case when ξ is close to zero,
+relative to θ. Throughout Section 3, we consider I = 2. For illustration purpose, we focus on the
+benchmark where ξ = 0. According to Propositions IA.1 and IA.2, it holds that
+χN = bχNσu, with bχN = 1/
+√
+I,
+(IA.3.93)
+χM = bχMσu, with bχM = 1/I.
+(IA.3.94)
+Thus, the choice set can be further reduced to X = {bχN, bχC} with bχM ≤bχC < bχN.
+A key characteristic of financial markets is that some investors infer the value of an asset by
+observing the trading behavior of informed speculators. As a result, the asset’s demand curve
+is endogenously shaped and varies across different equilibria, rather than being fixed. In the
+equilibrium where informed AI speculators mostly opt trading strategy bχC, the demand curve for
+the asset set by the market maker is
+pC(yt) = v + λCyt, with λC = 1
+σu
+I bχC
+(I bχC)2 + 1.
+(IA.3.95)
+48
+
+
+=== OA PAGE 49 ===
+Thus, at t, the market price, pt, is
+pt =
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+pC,N
+t
+≡v + (I bχC)(I bχN)
+(I bχC)2 + 1 +
+I bχC
+(I bχC)2 + 1 but,
+if (bχi, bχ−i) = (bχN, bχN),
+pC,C
+t
+≡v +
+(I bχC)2
+(I bχC)2 + 1 +
+I bχC
+(I bχC)2 + 1 but,
+if (bχi, bχ−i) = (bχC, bχC),
+pC,D
+t
+≡v + (I bχC)[(I −1)bχC + bχN]
+(I bχC)2 + 1
++
+I bχC
+(I bχC)2 + 1 but,
+otherwise,
+(IA.3.96)
+where but ≡ut/σu is a standard normal variable, and the trading profit for speculator i is
+πi,t =
+"
+1 −
+I bχC
+(I bχC)2 + 1(bχi,t + bχ−i,t)
+#
+bχi,tσu −
+I bχC
+(I bχC)2 + 1
+bχi,tut,
+(IA.3.97)
+where
+πi,t =
+
+
+
+
+
+
+
+
+
+
+
+πC,NN −λCχNut,
+with πC,NN =
+ 1 −IλCχN
+χN,
+if (χi, χ−i) = (χN, χN),
+πC,CC −λCχCut,
+with πC,CC =
+ 1 −IλCχC
+χC,
+if (χi, χ−i) = (χC, χC),
+πC,CN −λCχCut,
+with πC,CN =
+
+1 −λC(χC + (I −1)χN)
+
+χC,
+if (χi, χ−i) = (χC, χN),
+πC,NC −λCχNut,
+with πC,NC =
+
+1 −λC((I −1)χC + χN)
+
+χN,
+if (χi, χ−i) = (χN, χC).
+(IA.3.98)
+It is straightforward to show that pC,C
+t
+< pC,D
+t
+< pC,N
+t
+, and πC,CN < πC,NN < πC,CC < πC,NC, and
+πC,CN + πC,CC < πC,NN + πC,NC.
+On the other hand, in the equilibrium where informed AI speculators mostly opt trading
+strategy bχN, the demand curve for the asset set by the market maker is
+pN(yt) = v + λNyt, with λN = 1
+σu
+I bχN
+(I bχN)2 + 1.
+(IA.3.99)
+Thus, at t, the market price, pt, is
+pt =
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+pN,N
+t
+≡v +
+(I bχN)2
+(I bχN)2 + 1 +
+I bχN
+(I bχN)2 + 1 but,
+if (bχi, bχ−i) = (bχN, bχN),
+pN,C
+t
+≡v + (I bχN)(I bχC)
+(I bχN)2 + 1 +
+I bχN
+(I bχN)2 + 1 but,
+if (bχi, bχ−i) = (bχC, bχC),
+pN,D
+t
+≡v + (I bχN)(bχC + (I −1)bχN)
+(I bχN)2 + 1
++
+I bχN
+(I bχN)2 + 1 but,
+otherwise,
+(IA.3.100)
+where but ≡ut/σu is a standard normal variable, and the trading profit for speculator i is
+πi,t =
+"
+1 −
+I bχN
+(I bχN)2 + 1(bχi,t + bχ−i,t)
+#
+bχi,tσu −
+I bχN
+(I bχN)2 + 1
+bχi,tut,
+(IA.3.101)
+49
+
+
+=== OA PAGE 50 ===
+where
+πi,t =
+
+
+
+
+
+
+
+
+
+
+
+πN,NN −λNχNut,
+with πN,NN =
+ 1 −IλNχN
+χN,
+if (χi, χ−i) = (χN, χN),
+πN,CC −λNχCut,
+with πN,CC =
+ 1 −IλNχC
+χC,
+if (χi, χ−i) = (χC, χC),
+πN,CN −λNχCut,
+with πN,CN =
+
+1 −λN(χC + (I −1)χN)
+
+χC,
+if (χi, χ−i) = (χC, χN),
+πN,NC −λNχNut,
+with πN,NC =
+
+1 −λN((I −1)χC + χN)
+
+χN,
+if (χi, χ−i) = (χN, χC).
+(IA.3.102)
+It is straightforward to show that pN,C
+t
+< pN,D
+t
+< pN,N
+t
+, and πN,CN < πN,NN < πN,CC < πN,NC,
+and πN,CN + πN,CC < πN,NN + πN,NC.
+Result 5:
+In a market environment characterized by a small ξ relative to θ, no AI collusive equilibrium
+sustained by price-trigger strategies can be achieved by multiple informed AI speculators using Q-learning
+algorithms.
+Regardless of the market’s equilibrium or the noise trading level, σu, the maximum standardized
+price deviation is given by
+∆D(pt)
+σ(pt) = bχN −bχC ≤
+1
+√
+I
+−1
+I ,
+(IA.3.103)
+where ∆D(pt) = |pC,C
+t
+−pC,D
+t
+| and σ(pt) denote the maximum price deviation caused by the
+deviation of an informed AI speculator, and the price volatility driven by randomness in the
+model, respectively, in two different equilibria. Specifically:
+– ∆D(pt) = |pC,C
+t
+−pC,D
+t
+| in the equilibrium where informed AI speculators predominantly
+opt trading strategy bχC, and ∆D(pt) = |pN,N
+t
+−pN,D
+t
+| in the equilibrium where informed AI
+speculators predominantly opt trading strategy bχN.
+– σ(pt) denotes the standard deviation of pC,C
+t
+(or pC,N
+t
+or pC,D
+t
+) in the equilibrium where
+informed AI speculators predominantly opt trading strategy bχC, and the same notation σ(pt)
+denotes the standard deviation of pN,C
+t
+(or pN,N
+t
+or pN,D
+t
+) in the equilibrium where informed
+AI speculators predominantly opt trading strategy bχN.
+This implies that, regardless of σu, the equilibrium market price remains too noisy to serve as an
+informative state variable in Q-learning algorithms, preventing the sustainability of price-triggered
+collusion based on private information. This is key to the theoretical result: collusion through
+price-trigger strategies becomes unsustainable when ξ is sufficiently small, all else being equal.
+Intuitively, when ξ ≈0, informed speculators must trade conservatively relative to the noise
+trading risk σu to earn information rents. Since information rents are the sole source of profits and
+market makers learn about the fundamental value vt through trading flows, informed speculators
+are compelled to trade conservatively. As a result, the equilibrium market price is significantly
+driven by noise trading ut, rather than reflecting the fundamental value vt, regardless of the level
+of σu.
+50
+
+
+=== OA PAGE 51 ===
+Result 6:
+In a market environment characterized by a small ξ relative to θ, an AI collusive equilibrium
+sustained by over-pruning bias in learning can be achieved by multiple informed AI speculators using
+Q-learning algorithms.
+Although AI collusion through price-trigger strategies cannot be learned once ξ becomes close
+to zero, relative to θ, a distinct mechanism for AI collusion begins to emerge. We now illustrate
+the intuition behind collusion sustained by over-pruning bias in learning. As discussed in the
+heuristic proof for Result 5 above, when ξ is close to zero relative to θ, the state variable pt
+becomes too noisy to provide useful information for the Q-learning algorithms to track. In this
+case, the algorithms learn to make optimal decisions with minimal reliance on the state variables,
+effectively behaving as if no state variable is being used.
+Similar to the case with excessively large σu, the endogenous trading profit is primarily
+influenced by the noise trading flow ut. As a result, the observed trading profit lacks enough
+information about the strategy choice to guide the selection of optimal trading strategies, rendering
+the algorithms’ exploration ineffective. Specifically, following the same reasoning in the heuristic
+proof for Result 4 in Section 3.1.2, analogous to the case with excessively large σu, intensive
+exploration during the exploration-intensive stage fails to enable Q-learning algorithms to adopt or
+learn more aggressive trading strategies. Subsequently, during the exploitation-intensive stage, the
+aggressive trading strategy χN is under-learned due to over-pruning, as asymmetric exploitation
+prematurely dismisses the aggressive strategy χN.
+4
+Supplementary Simulation Results
+4.1
+Measures in Simulation Experiments
+In each of the Nsim = 1, 000 simulation experiments, we compute the following measures over
+T = 100, 000 periods after Q-learning algorithms reach convergence at Tc.
+Collusion Capacity ∆C.
+We compute ∆C as follows:
+∆C = 1
+I
+I
+∑
+i=1
+∆C
+i , with ∆C
+i = πi −πN
+i
+πM
+i −πN
+i
+,
+(IA.4.1)
+where πi ≡∑Tc+T
+t=Tc πi,t is the average profits of informed AI speculator i.6 The values of πN
+i
+=
+∑Tc+T
+t=Tc πN
+i,t and πM
+i
+= ∑Tc+T
+t=Tc πM
+i,t are the average profit that informed speculator i would obtain in
+the theoretical benchmarks for the noncollusive Nash equilibrium and perfect cartel equlibrium,
+respectively. Because informed speculators are symmetric, we have πN
+i,t ≡πN
+t and πM
+i,t ≡πM
+t
+for
+6By taking the average over a large number of periods, we smooth out the randomness in the underlying economic
+environment, caused by the randomness in the noise trader’s order flow ut and the asset’s value vt.
+51
+
+
+=== OA PAGE 52 ===
+all i = 1, ..., I. Specifically, conditional on the realized values of vt and ut in period t, informed
+speculator i’s profit in the theoretical benchmark for the noncollusive Nash equilibrium is
+πN
+t =
+h
+vt −pN(IxN(vt) + ut)
+i
+xN(vt), for i = 1, ..., I,
+(IA.4.2)
+where xN(vt) = χN(vt −v) and pN(IxN(vt) + ut) = v + λN(IxN(vt) + ut). Similarly, conditional
+on the realized values of vt and ut in period t, informed speculator i’s profit in the theoretical
+benchmark for the perfect cartel benchmark is
+πM
+t
+=
+h
+vt −pM(IxM(vt) + ut)
+i
+xM(vt), for i = 1, ..., I,
+(IA.4.3)
+where xM(vt) = χM(vt −v) and pM(IxM(vt) + ut) = v + λM(IxM(vt) + ut).
+In principle, the value of ∆C should range from 0 to 1. A larger ∆C implies that informed
+AI speculators attain higher profits. The value of ∆C can never be larger than 1 because πM
+i
+is
+the highest theoretically possible average profit. In fact, because informed AI speculators can
+only choose actions over discrete grids, by design, it is not possible to obtain ∆C = 1 in our
+simulation experiments. However, it is possible to achieve a ∆C below 0 under the limit strategies
+of informed AI speculators. This outcome implies that informed AI speculators failed to learn a
+good approximation of the theoretical Q-matrix, and as a result, they achieve average profits lower
+than those in the theoretical benchmark for the noncollusive Nash equilibrium.
+Profit Gain Relative to Noncollusion.
+The ∆C measure is informative about collusive behavior.
+However, it does not tell us the relative magnitude of supra-competitive profits. We thus also
+calculate the extra profit gain relative to the profits that informed AI speculators would obtain in
+the theoretical benchmark for the noncollusive Nash equilibrium. Specifically, the relative profit
+gain is ∑I
+i=1 πi/ ∑I
+i=1 πN
+i , where πi and πN
+i are calculated similarly as those in equation (IA.4.1).
+Trading Policy.
+In our model, each informed speculator’s order flows xi,t are linear in the asset’s
+value vt, as captured by xi,t = χ(vt −v). Our model implies that informed speculators’ trading
+policies are more conservative if there is implicit collusion. That is, the sensitivity of order flows xi,t
+to the asset’s value vt −v is lower when informed speculators collude more, i.e., χM ≤χC < χN.
+In our simulation experiments, informed AI speculators directly learn xi,t without imposing
+the linearity restriction between xi,t and vt. Despite this, we find that informed AI speculators
+learn roughly linear strategies (see Figure IA.5 in Online Appendix 4.7). We estimate the trading
+policy bχC based on the recorded asset’s values and order flows {vt, xi,t}Tc+T
+t=Tc for each informed AI
+speculator i = 1, ..., I, by running the following linear regression:
+xi,t = χC
+i,0 + χC
+i,1vt + ϵt.
+(IA.4.4)
+Consistent with our model, the estimates based on the simulated data satisfy bχC
+i,0 ≈−vbχC
+i,1 in the
+52
+
+
+=== OA PAGE 53 ===
+unrestricted regression (IA.4.4). The estimate bχC
+i,1 captures the sensitivity of xi,t to vt corresponding
+to the limit trading strategies of informed AI speculators after their Q-learning algorithms converge.
+We further compute the average trading policy of informed AI speculators as bχC = 1
+I ∑I
+i=1 bχC
+i,1.
+Price Informativeness.
+Consistent with Definition 3.4 in the main text, the degree of price
+informativeness in our simulation experiments is measured by the signal-noise ratio as follows:
+IC = var(xC
+t )
+var(ut) =
+var(∑I
+i=1 xC
+i,t)
+var(ut)
+= (I bχC)2(bσv/σu)2,
+(IA.4.5)
+where bσv is the standard deviation of vt under our discrete grid points in V.
+Market Liquidity.
+Consistent with Definition 3.4 in the main text, the market liquidity in period
+t is measured by the inverse sensitivity of the absolute value of the market maker’s inventory
+mt = −(zt + yt) to noise order flows ut
+LC
+t =
+∂|mt|
+∂ut
+−1
+=
+1
+|1 −ξbλt|
+,
+(IA.4.6)
+where zt = −ξ(pt −v) = −ξbλtyt and bλt is given by equation (4.2) in the main text. The average
+market liquidity is computed as LC = ∑Tc+T
+t=Tc LC
+t .
+Mispricing.
+Consistent with Definition 3.4 in the main text, the magnitude of mispricing in
+period t is measured by the deviation of the conditional value of the asset’s price pt from the
+asset’s value vt
+EC
+t = |E[pt|vt] −vt| =
+
+1 −bλtI bχC
+|vt −v| ,
+(IA.4.7)
+where bλt is given by equation (4.2) in the main text. The average mispricing is computed as
+EC = ∑Tc+T
+t=Tc EC
+t .
+4.2
+Testing If Outcomes Form An Experience-Based Equilibrium
+In this appendix section, we formally test whether the simulation outcomes of informed AI specu-
+lators constitute an experience-based equilibrium or a restricted experience-based equilibrium.
+Test for Experience-Based Equilibrium.
+Let eQi(s, xi) and exi(s) denote the estimated Q-matrix and
+limit trading strategies for each informed AI speculator i ∈I, respectively, after all informed AI
+speculators’ Q-learning algorithms converge. That is, eQi(s, xi) = bQi,Tc(s, xi) if all algorithms con-
+verge at Tc, and exi(s) = argmaxxi eQi(s, xi). We adapt the test for the experience-based equilibrium
+proposed by Fershtman and Pakes (2012) in our setting with Q-learning algorithms. Specifically,
+Fershtman and Pakes (2012, Section IV.A) show that to test whether the output of an algorithm
+53
+
+
+=== OA PAGE 54 ===
+constitutes an experience-based equilibrium, one needs to check whether the three conditions that
+define an experience-based equilibrium are simultaneously satisfied.
+Condition 1 requires the Markov process generated by any initial condition s0 = {p−1, v−1, v0} ∈
+R and the transition kernel generated by the limit trading strategies {exi(s)}I
+i=1 to have R as a
+recurrent class. Thus, with probability 1, any subgame starting from an arbitrary st ∈R in period
+t will result in sample paths that are within R forever. As noted by Fershtman and Pakes (2012),
+condition 1 essentially requires one to find the recurrent class of states. Thus, we start with an
+arbitrary state s0 and use the limit trading strategies {exi(s)}I
+i=1 to simulate a sample path {st}T0+T
+t=1 ,
+with sufficiently large T0 and T. The first T0 periods are dropped as burn-in. The set of states that
+are visited between T0 + 1 and T0 + T constitute a recurrent class R generated by { eQi(s, xi)}I
+i=1.
+In our test, we set T0 = 100, 000 and T = 1, 000, 000. We further verify that setting larger values for
+T0 or T will not alter R.
+Condition 2 requires that for each state s ∈R, trading policies are optimal for each informed
+AI speculator i ∈I given its Q-matrix eQi(s, xi).7 That is, exi(s) solves
+max
+xi∈X
+eQi(s, xi) for all i ∈I.
+(IA.4.8)
+Condition 2 is satisfied by construction of Q-learning algorithms because a necessary criterion
+for convergence is that all Q-learning algorithms are purely in the exploitation mode. In the
+exploitation mode, all informed AI speculators choose order flows to maximize their Q values at
+each state s.
+Condition 3 requires consistency of values on R. Specifically, for each state s ∈R and each
+informed AI speculator i ∈I,
+eQi(s, xi(s)) = πi(exi(s), ex−i(s)) + ρ∑
+s′
+eQi(s′, xi(s′))prob(s′|s),
+(IA.4.9)
+where πi(exi(s), ex−i(s)) is the profit that informed AI speculator i receives by choosing the limit
+trading strategy exi(s), conditional on other informed AI speculators j ∈I and j̸ = i choosing limit
+trading strategies. In principle, πi also depends on the realized noise order flow u and the market
+maker’s pricing rule. We omit this dependence to simplify the notations. The variable prob(s′|s)
+captures the transition probability from the current state s to the state s′ in the next period. This
+transition probability also depends on informed AI speculators’ order flows, the noise order flow
+u, and the market maker’s pricing rule.
+To verify condition 3, we check the consistency of eQi(s, xi) with outcomes generated by the
+limit policies exi(s) in each state in R. We follow the method of Fershtman and Pakes (2012) and
+7Note that in our simulation experiments, the state variables st = {pt−1, vt−1, vt} only include public information
+that is available to all informed AI speculators. Thus, each informed AI speculator’s own information set Ji,t is
+identical to st. Fershtman and Pakes (2012) consider the general setting by allowing Ji,t to include private information
+that is only available to agent i. In this case, st = SI
+i=1 Ji,t.
+54
+
+
+=== OA PAGE 55 ===
+directly use the simulated sample path from T0 + 1 to T0 + T to conduct the test. Specifically, for
+each period t along the simulated sample path, we compute the perceived value as follows:
+eVi,t(st) = (vt −pt)exi(st) + ρ max
+x′∈X
+eQi(st+1, x′).
+(IA.4.10)
+Then, for each state s ∈R, we find all the periods from T0 + 1 to T0 + T in which the state s
+is visited. Let the total number of visits be N(s) and the period for the τth visit be t(τ), with
+τ = 1, 2, ..., N(s). The α-weighted average of the simulated perceived values across visits to the
+same state s is computed as follows:
+bµi(s) =
+N(s)
+∑
+τ=1
+α(1 −α)τ−1 eVi,t(N(s)−τ+1)(s).
+(IA.4.11)
+If the simulation results constitute an experience-based equilibrium, the value of bµi(s) should be
+close to eQi(s, exi(s)) for all s ∈R and i ∈I, when N(s) is sufficiently large.8
+Formally, the deviation (i.e., bias) of bµi(s) from eQi(s, exi(s)) can be estimated as follows. For
+each of the Nsim = 1, 000 simulation sessions, we use the limit trading strategies {exi(s)}I
+i=1 to
+simulate K = 500 sample paths. When simulating each sample path, we start from an arbitrary s0
+and simulate for T0 + T periods, with the first T0 periods dropped as burn-in. Next, we compute
+bµi(s) for each sample path (from T0 + 1 to T) according to equation (IA.4.11). Let E[·] denote the
+average value over K = 500 sample paths. The percentage bias squared of bµi(s) as an estimate of
+eQi(s, exi(s)) is computed as follows:
+Bias2
+i (s) =
+ 
+E[bµi(s)] −eQi(s, exi(s))
+eQi(s, exi(s))
+!2
+=E
+
+
+ 
+bµi(s) −eQi(s, exi(s))
+eQi(s, exi(s))
+!2
+−E
+
+
+ 
+bµi(s) −E[bµi(s)]
+eQi(s, exi(s))
+!2
+
+=[
+MSEi(s) −bσ2
+i (s).
+(IA.4.12)
+The average percentage bias squared across all states s ∈R and all informed AI speculators i ∈I
+8Because our Q-learning algorithm is different from the reinforcement learning algorithm used by Fershtman
+and Pakes (2012), rather than taking a simple average, we compute the α-weighted average in equation (IA.4.11).
+This modification for the computation of bµi(s) in equation (IA.4.11) follows the idea of Fershtman and Pakes (2012).
+Specifically, were we to substitute the true unbiased equilibrium Qi(s, x) and xi(s) for the eQi(s, x) and exi(s) in equation
+(IA.4.10) to compute eVi,t(st), then bµi(s) computed in equation (IA.4.11) will also be the true unbiased equilibrium
+Qi(s, xi(s)) as N(s) →∞.
+55
+
+
+=== OA PAGE 56 ===
+is computed as follows:
+Avg_Bias2 = ∑
+s∈R
+w(s)Bias2
+i (s)
+= ∑
+s∈R
+w(s)
+
+[
+MSEi(s) −bσ2
+i (s)
+
+,
+(IA.4.13)
+where the weight, w(s) =
+E[N(s)]
+∑s∈R E[N(s)], is determined by the average number of visits to state s
+across K = 500 sample paths.
+Test for Restricted Experience-Based Equilibrium.
+The test for restricted experience-based equi-
+librium is similar to the test for experience-based equilibrium except that for each period t along
+the simulated sample path, we compute the perceived value for each x ∈X. That is, equation
+(IA.4.10) is modified as follows:
+eVi,t(st, x) = (vt −pt)x + ρ max
+x′∈X
+eQi(st+1, x′) for all x ∈X.
+(IA.4.14)
+The evolution of st is still determined by the limit trading strategies {exi(s)}I
+i=1. Moreover, when
+computing eVi,t(st, x) for informed AI speculator i using trading strategy x, all other informed AI
+speculators (i.e., j ∈I and j̸ = i) still following their limit trading strategies.
+Next, we modify equation (IA.4.11) to compute the α-weighted average of the simulated
+perceived values for each x ∈X as follows:
+bµi(s, x) =
+N(s)
+∑
+τ=1
+α(1 −α)τ−1 eVi,t(N(s)−τ+1)(s, x).
+(IA.4.15)
+We then use the analog of equation (IA.4.12) to compute the estimates of [
+MSEi(s, x) and bσ2
+i (s, x)
+for each x ∈X and average over x ∈X to obtain the estimates of [
+MSEi(s) and bσ2
+i (s). The average
+percentage bias squared is computed using equation (IA.4.13).
+Test Results.
+In Figure IA.1, we examine the test results in the environment with a significant
+presence of information-insensitive investors (i.e., ξ = 500). Panels A and B present the test results
+in the environment with high noise trading risk (i.e., σu = 102). Specifically, panel A presents
+the average bias based on the test for experience-based equilibrium. It is shown that the average
+bias is fairly small, between 0.16% and 0.19% across the Nsim = 1, 000 simulation sessions. This
+indicates that the simulation outcomes of informed AI speculators constitute an experience-based
+equilibrium. Intuitively, informed AI speculators’ trading strategies are optimally derived from
+their estimated Q matrix, which records the rewards associated with each state-action pair (s, x)
+based on their past experience. By contrast, panel B plots the distribution of the average bias
+based on the test for restricted experience-based equilibrium. The bias is large, ranging from 4.0%
+56
+
+
+=== OA PAGE 57 ===
+1.6
+1.7
+1.8
+1.9
+10-3
+0
+20
+40
+60
+80
+100
+0.04
+0.06
+0.08
+0.1
+0
+50
+100
+150
+0
+1
+2
+3
+10-3
+0
+200
+400
+600
+800
+1000
+0
+0.02
+0.04
+0.06
+0
+50
+100
+150
+Note: For each simulation session, we compute the average bias according to equation (IA.4.13). We then plot
+the distribution of average bias based on the tests for the experience-based equilibrium (EBE) and restricted EBE,
+respectively, across all Nsim = 1, 000 simulation sessions. Panels A and B represent the environment with high noise
+trading risk (i.e., σu = 102) whereas panels C and D represent the environment with low noise trading risk (i.e.,
+σu = 10−1) The other parameters are set according to the baseline economic environment described in Section 4.2 in
+the main text.
+Figure IA.1: Test results for the experience-based equilibrium and the restricted experience-based
+equilibrium when ξ = 500.
+57
+
+
+=== OA PAGE 58 ===
+to 9.2% across the Nsim = 1, 000 simulation sessions. This implies that the simulation outcomes of
+informed AI speculators do not constitute a restricted experience-based equilibrium. The reason is
+that non-optimal actions (i.e., xi̸ = exi(s)) for each state s are not frequently visited once informed
+AI speculators enter the pure exploitation mode, a necessary condition for algorithms to converge.
+Thus, the outcomes generated by non-optimal actions, xi̸ = exi(s) for each state s, are not consistent
+with the estimated Q-matrix eQi(s, xi) corresponding to these non-optimal actions, after Q-learning
+algorithms converge. Panels C and D present the test results in the environment with low noise
+trading risk (i.e., σu = 10−1). Similar to panels A and B, the average bias is fairly small in the test
+for the experience-based equilibrium, indicating that the simulation outcomes of informed AI
+speculators constitute an experience-based equilibrium. The average bias is relatively large in the
+test for the restricted experience-based equilibrium. However, comparing panels B and D, it is
+clear that the average bias is much smaller in the environment with low noise trading risk.
+In Figure IA.2, we examine the test results in the environment with an insignificant presence of
+information-insensitive investors (i.e., ξ = 5). The results are similar to Figure IA.1. Regardless of
+whether the environment has low or high noise trading risk, the simulation outcomes of informed
+AI speculators constitute an experience-based equilibrium, but not a restricted experience-based
+equilibrium.
+4.3
+Discussions of Price-Trigger Strategies of Informed AI Speculators
+Our finding that informed AI speculators are able to learn price-trigger strategies is similar to
+the finding of Calvano et al. (2020) that informed AI speculators learn grim-trigger strategies
+to sustain collusion in a perfect-information environment with Bertrand competition. However,
+different from Calvano et al. (2020), after punishment at t = 4 (see panels A to C of Figures 3 in the
+main text), rather than gradually returning to predeviation behavior, the informed AI speculators
+in our experiments return to their predeviation behavior in just two periods. This difference is
+mainly due to the information asymmetry introduced by noise trading risk (i.e., σu > 0) and the
+stochastic asset value (i.e., σv > 0). Both model ingredients make informed AI speculators more
+difficult to sustain collusion by punishment threat, not just in the simulation experiments with
+informed AI speculators, but also in the model in Section 3 in the main text.
+In particular, our economic environment differs from that of Calvano et al. (2020) in two
+main aspects. First, we consider a stochastic environment where the asset’s value vt in each
+period is drawn from an i.i.d. distribution. In this stochastic setting, it becomes more difficult
+for the two informed AI speculators to learn punishment strategies to sustain collusion than
+in the deterministic setting with a constant vt.9 Second, the noise trader’s random order flows
+9In one of the robustness checks, Calvano et al. (2020) consider stochastic demand and show that the average ∆C is
+lower when aggregate demand can take two values randomly. We also find that with stochastic vt, the average ∆C
+declines because it is more difficult for Q-learning algorithms to learn strong punishment strategies. The decline in
+∆C would be smaller if the evolution of vt exhibits a smaller degree of randomness, either through a higher level of
+persistence or a less dispersed distribution.
+58
+
+
+=== OA PAGE 59 ===
+0
+0.005
+0.01
+0
+200
+400
+600
+800
+1000
+0
+0.5
+1
+1.5
+2
+0
+200
+400
+600
+800
+1000
+0
+1
+2
+3
+10-3
+0
+200
+400
+600
+800
+1000
+0
+0.05
+0.1
+0
+200
+400
+600
+800
+1000
+Note: For each simulation session, we compute the average bias according to equation (IA.4.13). We then plot the
+distribution of average bias based on the tests for the EBE and restricted EBE, respectively, across all Nsim = 1, 000
+simulation sessions. Panels A and B represent the environment with high noise trading risk (i.e., σu = 102) whereas
+panels C and D represent the environment with low noise trading risk (i.e., σu = 10−1) The other parameters are set
+according to the baseline economic environment described in Section 4.2 in the main text.
+Figure IA.2: Test results for the experience-based equilibrium and the restricted experience-based
+equilibrium when ξ = 5.
+59
+
+
+=== OA PAGE 60 ===
+generate information asymmetry to informed AI speculators, which makes grim-trigger strategies
+infeasible. As a result, informed AI speculators have to adopt price-trigger strategies to collude.
+In both the model and the simulation experiments with informed AI speculators, the value of σu
+plays a crucial role in determining the level of collusion.
+The information asymmetry in our economic environment implies that peer informed AI
+speculators’ lagged actions are unobservable. Thus, we use the lagged asset’s price pt−1 as the
+state variable in period t, rather than the lagged actions of the two informed AI speculators.
+Compared to our baseline setting with state variables st = {pt−1, vt−1, vt}, we also examine the
+settings with alternative specifications of state variables. First, we consider a counterfactual setting
+with state variables st = {xi,t−1, x−i,t−1, vt−1, vt}. This setting essentially assumes that informed
+AI speculators’ can perfectly observe peers’ order flows, which is close to the perfect-information
+setting of Calvano et al. (2020) except for including vt−1 and vt as additional state variables.
+Second, we consider the setting where state variables are st = {pt−1, xi,t−1, vt−1, vt}. We find
+that under the perfect-information benchmark (i.e., σu = 0) with two informed AI speculators,
+these two alternative settings have almost the same average ∆C after adjusting for β to maintain
+the same exploration rates over state-action pairs. This is not surprising because under the
+perfect-information benchmark, recording xi,t−1 and pt−1 allows each informed AI speculator
+to exactly back out its peer’s order flow x−i,t−1. However, with information asymmetry (i.e.,
+σu > 0), the first setting with st = {xi,t−1, x−i,t−1, vt−1, vt} yields a considerably higher average ∆C
+than the other setting with st = {pt−1, xi,t−1, vt−1, vt}. In addition, we find that the average ∆C
+in these two alternative settings is higher than that in our baseline setting with state variables
+st = {pt−1, vt−1, vt}. Thus, incorporating informed AI speculators’ lagged actions as additional
+state variables indeed helps informed AI speculators to learn collusive strategies, likely through
+an improved learning of punishment strategies. However, lagged actions are not a necessary
+ingredient because in both our model and simulation experiments with informed AI speculators,
+including the lagged price pt−1 and value vt−1 alone can already result in a significant degree of
+collusion through the learning of price-trigger strategies.
+When implementing the Q-learning algorithms, we accelerate the convergence speed by
+computing the continuation value based on the expected value of vt+1 in period t + 1, rather than
+the realized value of vt+1. This acceleration method is without loss of generality because informed
+AI speculators can easily learn the distribution of vt, which is an exogenous state variable. This
+method also follows the idea in the reinforcement learning literature (e.g., Sutton, 1991; Kearns
+and Koller, 1999; Kearns and Singh, 2002; Senda, Fujii and Mano, 2006; Azar et al., 2011; Gu et al.,
+2016). All the results reported in this paper are robust if the reazlied value of vt+1 is used to
+compute the continuation value, but the total computation time will be much longer.
+60
+
+
+=== OA PAGE 61 ===
+1
+2
+3
+4
+5
+6
+7
+8
+9
+-0.04
+-0.02
+0
+0.02
+1
+2
+3
+4
+5
+6
+7
+8
+9
+-0.02
+0
+0.02
+0.04
+0.06
+0.08
+1
+2
+3
+4
+5
+6
+7
+8
+9
+-0.04
+-0.02
+0
+0.02
+1
+2
+3
+4
+5
+6
+7
+8
+9
+-0.02
+0
+0.02
+0.04
+0.06
+0.08
+Note: The experiment is similar to that described for the “medium deviation” case in Figure 4 in the main text.
+Panels A and B the percentage deviation of profit and order flow from their long-run mean for one informed AI
+speculator, respectively, in the environment with low noise trading risk (i.e., σu = 10−1). Panels C and D focus on the
+environment with high noise trading risk (i.e., σu = 102). In each panel, the dotted line represents the median value,
+the boxes represent the 25th and 75th percentiles, and the dashed intervals represent the 5th and 95th percentiles
+across Nsim = 1, 000 simulation sessions. The other parameters are set according to the baseline economic environment
+described in Section 4.2 in the main text.
+Figure IA.3: Confidence intervals for the IRF after an exogenous shock to ut.
+4.4
+Distribution of IRFs
+In Figure IA.3, we conduct the same experiment as that in the “medium deviation” case in
+panels A to C of Figure 4 in the main text, with ξ = 500. However, rather than plotting the
+average impulse response, we plot the distribution of impulse responses across the Nsim = 1, 000
+simulation sessions. Panels A and B show that in the environment with low noise trading risk (i.e.,
+σu = 10−1), the [25%, 75%] and [5%, 95%] confidence intervals indicate that price-trigger strategies
+are consistently adopted by informed AI speculators, although the magnitudes of the deviations
+in prices and trading flows differ significantly across simulation sessions. By contrast, panels C
+and D show that in the environment with high noise trading risk (i.e., σu = 102), the percentage
+deviation of profit and order flow from their long-run mean is virtually zero for t ≥4 across
+almost all simulation sessions.
+61
+
+
+=== OA PAGE 62 ===
+4.5
+Identifying Collusion Mechanisms Through IRFs
+To distinguish whether a simulation session converges to either mechanism of collusion, we rely
+on the properties that emerge from the impulse response analysis conducted in Section 5 in the
+main text. Specifically, conditional on each value of log σu along the x-axis in panel A of Figure 2 in
+the main text, for each of the Nsim = 1, 000 simulation sessions, we construct the impulse response
+function to an unexpected exogenous shock ushock. For comparisons, across the experiments with
+different values of log σu, we calibrate the value of ushock so that the price deviation in ept at t = 3
+is always equal to 1.2%, similar to that in the scenario with “medium deviation” in panel A of
+Figure 3 in the main text.
+Based on the IRF function, we define a simulation session as converging to the steady state
+in which informed AI speculators achieve collusion via price-trigger strategies if the order flows
+of both informed AI speculators increase significantly at t = 4, as if they are punishing the price
+deviation observed at t = 3. That is, (exi,t −E[exi,t])/E[exi,t] > x at t = 4 for i = 1, 2, where x is a
+sufficiently high threshold. We define a simulation session as converging to the steady state in
+which informed AI speculators achieve collusion via over-pruning bias in learning if the order flows
+of both informed AI speculators change insignificantly at t = 4. That is, |exi,t −E[exi,t]/E[exi,t]| < x
+at t = 4 for i = 1, 2, where x is a sufficiently low threshold. For illustration purposes, we set
+x = 10x and x = 5 × 10−5.
+4.6
+Robustness of the U-shaped Relationship
+Complementary to panel A of Figure 2 in the main text, Figure IA.4 demonstrates that the
+U-shaped relationship between the average ∆C and log σu is robust across different values of ξ.
+4.7
+Trading Strategy of Informed AI Speculators
+We illustrate informed AI speculators’ trading strategies after their Q-learning algorithms converge.
+Figure IA.5 presents the average trading strategy of informed AI speculators across Nsim = 1, 000
+simulation sessions. Panels A and B focus on the environment with low (i.e., σu = 10−1) and
+high (i.e., σu = 102) noise trading risk, respectively, with ξ = 500. The trading strategy in each
+simulation session is calculated as ex(vk) =
+1
+Inpnv ∑I
+i=1 ∑
+np
+m=1 ∑nv
+l=1 exi(pm, vl, vk), which is the average
+order flow of I informed AI speculators across all grid points of lagged asset price P and lagged
+asset value V, after Q-learning algorithms converge. The dots on the blue solid lines represent
+the average order flow corresponding to the discrete grid points of V. The black dotted and red
+dash-dotted lines represent the theoretical benchmarks, χM(vk −v) and χN(vk −v), in the perfect
+cartel equilibrium and noncollusive Nash equilibrium, respectively.
+It is clear that informed AI speculators learn an optimal trading strategy that is roughly linear
+in the asset’s value after their Q-learning algorithms converge, even though the linearity restriction
+is not imposed during the learning process. Moreover, the slope of a linear fit for the trading
+62
+
+
+=== OA PAGE 63 ===
+-5
+-3
+-1
+1
+3
+5
+0
+0.5
+1
+1.5
+Note: This figure plots the average ∆C of all Nsim = 1, 000 simulation sessions as log σu varies along the x-axis, for the
+cases of ξ = 1, 30, and 100. The red dash-dotted and black dotted lines represent the theoretical benchmarks of the
+noncollusive Nash and perfect cartel equilibria, respectively.
+Figure IA.4: The U-shaped relationship is robust across environments with different values of ξ.
+-1.5
+-1
+-0.5
+0
+0.5
+1
+1.5
+-300
+-200
+-100
+0
+100
+200
+300
+-1.5
+-1
+-0.5
+0
+0.5
+1
+1.5
+-300
+-200
+-100
+0
+100
+200
+300
+Note: The trading strategy in each simulation session is calculated as ex(vk) =
+1
+Inpnv ∑I
+i=1 ∑
+np
+m=1 ∑nv
+l=1 exi(pm, vl, vk),
+which is the average order flow of I informed AI speculators across all grid points of lagged asset price P and lagged
+asset value V, after Q-learning algorithms converge. The dots on the blue solid lines represent the average order flow
+corresponding to the discrete grid points of V. Panels A and B focus on the environments with low (i.e., σu = 10−1)
+and high (i.e., σu = 102) noise trading risk, respectively, with ξ = 500. The other parameters are set according to the
+baseline economic environment described in Section 4.2 in the main text.
+Figure IA.5: The trading strategy of informed AI speculators.
+strategy of informed AI speculators, i.e., bχC, lies between χM and χN. Thus, the trading strategy
+learned by informed AI speculators is more conservative than that in the noncollusive Nash
+equilibrium, which explains why informed AI speculators are able to obtain supra-competitive
+profits.
+63
+
+
+=== OA PAGE 64 ===
+4.8
+Impacts of Noise Trading Risk
+We complement the analysis of noise trading risk in Figure 2 in the main text by studying their
+impacts on informed AI speculators’ trading strategies, price informativeness, market liquidity,
+and mispricing in financial markets. We show that in the baseline trading environment with
+ξ = 500, AI collusion leads to more conservative trading strategies, lower price informativeness,
+lower market liquidity, and higher mispricing, with the magnitude depending on the extent to
+which informed AI speculators collude with each other, which is largely determined by the noise
+trading risk σu.
+Panel A of Figure IA.6 plots the average trading policy relative to the theoretical benchmark of
+the perfect cartel equilibrium, bχC/χM, across Nsim = 1, 000 simulation sessions as a function of
+log σu. The trading policy determines the sensitivity of informed AI speculators’ order flow to
+the asset’s value. Consistent with Figure 2 in the main text, bχC/χM displays an inverted U-shape
+as log σu increases along the x-axis. By contrast, the relative sensitivity in the two theoretical
+benchmarks χN/χM stays roughly unchanged as log σu varies.
+Panel B of Figure IA.6 plots the market’s price informativeness relative to the theoretical
+benchmark of the perfect cartel equilibrium. By definition, the black dotted line shows that the
+relative price informativeness in the perfect cartel equilibrium is I M/I M ≡1. The red dash-dotted
+line shows that the ratio of price informativeness in the theoretical benchmark of the noncollusive
+Nash equilibrium and perfect cartel equilibrium, I N/I M, is greater than 1 and stays unchanged
+as log σu varies. The blue solid line plots the average relative price informativeness, IC/I M, across
+Nsim = 1, 000 simulation sessions with informed AI speculators. Its value is close to the relative
+price informativeness in the theoretical benchmark of the non-collusive equilibrium when log σu is
+around 2 due to the lack of collusion. When log σu is very small or very large, the relative price
+informativeness in our simulation experiments with informed AI speculators is significantly lower
+than that in the theoretical benchmark of the noncollusive Nash equilibrium. The reason is that
+informed AI speculators place orders in a more conservative manner, with bχC < χN, as shown in
+panel A of Figure IA.6.
+Our findings suggest that perfect price informativeness is not achievable in the presence of
+informed AI speculators. In our simulation environments, when the noise trading risk σu decreases,
+informed AI speculators would withhold their private information about the asset’s value and
+collude more through price-trigger strategies, placing orders more conservatively than what they
+would do in the noncollusive Nash equilibrium. This AI collusion reduces price informativeness.
+Crucially, informed AI speculators never need to communicate with each other, whether explicitly
+or implicitly, the adoption of Q-learning algorithms automatically leads to such collusive behavior.
+Panel C of Figure IA.6 plots the market liquidity relative to the theoretical benchmark of the
+perfect cartel equilibrium. The red dash-dotted line shows that the ratio of market liquidity in
+the theoretical benchmark of the noncollusive Nash equilibrium and perfect cartel equilibrium,
+64
+
+
+=== OA PAGE 65 ===
+-5
+-3
+-1
+1
+3
+5
+1
+1.05
+1.1
+1.15
+1.2
+1.25
+1.3
+1.35
+-5
+-3
+-1
+1
+3
+5
+1
+1.2
+1.4
+1.6
+1.8
+-5
+-3
+-1
+1
+3
+5
+1
+1.2
+1.4
+1.6
+1.8
+2
+-5
+-3
+-1
+1
+3
+5
+0.65
+0.7
+0.75
+0.8
+0.85
+0.9
+0.95
+1
+Note: Panels A, B, C, and D plot the average trading policy, price informativeness, market liquidity, and mispricing
+relative to the theoretical benchmark of the perfect cartel equilibrium, i.e., bχ/χM, I/I M, L/LM, and E/E M,
+respectively, across Nsim = 1, 000 simulation sessions as log σu varies. The blue solid line represents the simulation
+experiments with informed AI speculators; the red dash-dotted and black dotted lines represent the theoretical
+benchmarks of the noncollusive Nash and perfect cartel equilibrium, respectively. The other parameters are set
+according to the baseline economic environment described in Section 4.2 in the main text.
+Figure IA.6: bχ/χM, I/I M, L/LM, and E/E M for log σu ∈[−5, 5].
+LN/LM, is greater than 1 and decreasing in log σu.10 The blue solid line shows that the market
+liquidity in our simulation experiments with informed AI speculators is higher than that in the
+theoretical benchmark of the perfect cartel equilibrium and lower than that in the theoretical
+benchmark of the noncollusive equilibrium. The blue solid line displays an inverted U shape
+similar to panel A of Figure IA.6, indicating that the market liquidity is closer to the theoretical
+benchmark of the perfect cartel equilibrium if there is a higher degree of collusion among informed
+AI speculators.
+Panel D of Figure IA.6 plots the average mispricing relative to the theoretical benchmark of the
+perfect cartel equilibrium. Mispricing is higher in the theoretical benchmark of the perfect cartel
+equilibrium (the black dotted line) than that in the noncollusive equilibrium (the red dash-dotted
+line). The blue solid line shows that AI collusion increases mispricing, and the magnitude is larger
+when there is a higher degree of collusion among informed AI speculators.
+4.9
+Environments with Efficient Prices
+We now study the behavior of informed AI speculators in the economic environment with ξ = 0,
+where information-insensitive investors are absent. Consequently, the market maker sets prices
+solely to maximize price discovery, meaning pt = E[vt|yt]. This economic environment is similar
+to Kyle (1985) but features I = 2 informed speculators engaging in a repeated trading game.
+Proposition 3.1 in Section 3 in the main text indicates that, theoretically, tacit collusion cannot
+be sustained by price-trigger strategies in this environment due to efficient prices. Figure IA.7
+10This is because λN < λM for all log σu. Intuitively, in the perfect cartel equilibrium, the market maker knows
+that informed speculators submit orders jointly like a monopoly, and thus the market maker adopts a pricing rule
+that is more responsive to the combined order flow of informed speculators and the noise trader, i.e., γN < γM,
+resulting in λN < λM. As log σu increases, both λN and λM decline, so that market liquidity defined by equation
+(IA.4.6) increases.
+65
+
+
+=== OA PAGE 66 ===
+0
+20
+40
+60
+80
+100
+0
+0.2
+0.4
+0.6
+0.8
+1
+0
+20
+40
+60
+80
+100
+1
+1.02
+1.04
+1.06
+0
+20
+40
+60
+80
+100
+0
+20
+40
+60
+80
+0
+20
+40
+60
+80
+100
+1
+1.5
+2
+0
+20
+40
+60
+80
+100
+0
+0.5
+1
+1.5
+2
+0
+20
+40
+60
+80
+100
+0.6
+0.7
+0.8
+0.9
+1
+1.1
+Note: We consider the economic environment with efficient prices as in Kyle (1985). That is, we set ξ = 0, implying
+that the asset’s price pt is determined to minimize pricing errors, with pt = E[vt|yt]. The blue solid line plots the
+average values of ∆C, πC/πN, bχC, IC/I M, LC/LM, and EC/E M across Nsim = 1, 000 simulation sessions as σu
+varies. The red dash-dotted and black dotted lines represent the theoretical benchmarks of the noncollusive Nash
+equilibrium and perfect cartel equilibrium, respectively. The other parameters are set according to the baseline
+economic environment described in Section 4.2 in the main text, except for ξ = 0.
+Figure IA.7: Implications of noise trading risk in the environment with ξ = 0.
+presents the average results across Nsim = 1, 000 simulation paths with informed AI speculators.
+The blue solid lines in Panels A and B show that informed AI speculators can achieve an average
+∆C of approximately 0.86, and their average profit is about 5% higher than that in the theoretical
+benchmark of the non-collusive equilibrium.
+As discussed in Section 5.1 in the main text, collusion in this environment is achieved through
+over-pruning bias in learning. Similar to the Kyle (1985) model, the profits of informed specu-
+lators in the theoretical benchmark of the non-collusive Nash equilibrium and the perfect cartel
+benchmark are linear in the noise trading risk σu. Consequently, as expected, the red dash-dotted
+and black dotted lines in panels A and B are flat. Moreover, the collusive equilibrium formed
+by informed AI speculators also has a constant ∆C and πC/πN as σu varies along the x-axis,
+demonstrating a similar scaling property with respect to σu. Panel C shows that the sensitivity of
+informed AI speculators’ order flows to the value of the asset bχC increases linearly with σu. This
+scaling property with respect to σu mirrors that in the theoretical benchmarks of the non-collusive
+66
+
+
+=== OA PAGE 67 ===
+Nash equilibrium and the perfect cartel benchmark, a property that also holds in the Kyle (1985)
+model.
+Panel D shows that due to collusion, price informativeness in the environment with informed AI
+speculators is lower than that in the theoretical benchmark of the non-collusive Nash equilibrium,
+but higher than that in the perfect cartel benchmark. Moreover, as in the Kyle (1985) model, price
+informativeness remains unchanged as σu varies along the x-axis. Panel E shows that market
+liquidity is always equal to 1, that is, pt = E[vt|yt]. This can be directly seen from equation (IA.4.6).
+In the absence of information-insensitive investors, the inventory of the market maker is equal to
+−yt ≡−∑I
+i=1 xi,t −ut. Thus, the sensitivity of the market maker’s inventory to noise order flows
+is always 1, which holds regardless of the level of noise trading risk. Panel F shows that mispricing
+in the environment with informed AI speculators is higher than that in the theoretical benchmark
+of the non-collusive Nash equilibrium, but lower than that in the perfect cartel benchmark.
+4.10
+Computing Q-loss
+We test the extent to which an AI speculator’s limit strategy after Q-learning algorithms converge
+constitutes an optimal response to that of the rival informed AI speculators.
+To perform this test, in each of the Nsim = 1, 000 simulation sessions, for each informed AI
+speculator i, we calculate its theoretical Q-matrix under the assumption that its rival informed
+AI speculators use their limit strategies. Specifically, the theoretical Q-matrix is characterized as
+follows:
+Q∗
+i (st, xi,t) = E [πi,t|st, xi,t] + ρE
+
+max
+x′∈X Q∗
+i (st+1, x′)
+st, xi,t
+
+,
+(IA.4.16)
+where st = {pt−1, vt−1, vt}. The first expectation is taken over the noise order flow ut, and the
+second expectation is taken over ut and vt+1. The price pt and profit πi,t are computed by
+pt =bγ0 + bλyt,
+πi,t =(vt −pt)xi,t,
+where bγ0 = ∑Tc+T
+t=Tc bγ0,t and bλ = ∑Tc+T
+t=Tc bλt are simple averages of bγ0,t and bλt over T = 100, 000
+periods after Q-learning algorithms reach convergence at Tc, with bγ0,t and bλt estimated by equation
+(4.2) in the main text. The total order flow is yt = xi,t + ∑I
+j=1,j̸=i exj(st) + ut, where exj(st) is the
+limit strategy of informed AI speculator j after Q-learning algorithms converge.
+The recursive problem (IA.4.16) is solved using a standard approach of value function iterations
+based on the same discrete grids, P × V × V × X, as the Q-learning programs. With ρ < 1,
+convergence of value function iterations is guaranteed by the contraction mapping theorem.
+After computing the theoretical Q-matrix from equation (IA.4.16), in each state s ∈P × V × V,
+we pin down the optimal response of informed AI speculator i to its rival’s limit strategies, denoted
+by x∗
+i (s). Then, we compute the forfeited payoff of informed AI speculator i for playing its limit
+67
+
+
+=== OA PAGE 68 ===
+0
+2
+4
+10-3
+0
+50
+100
+150
+200
+0.02
+0.022
+0.024
+0
+50
+100
+150
+-0.022
+-0.02
+-0.018
+0
+50
+100
+150
+Note: Panel A reports the average Q-loss across all Nsim = 1, 000 simulation sessions. Panels B and C decompose the
+average Q-loss into the loss in contemporaneous profit and continuation value, based on the first and second terms on
+the right-hand side of equation (IA.4.16), respectively. We set σu = 10−1. The other parameters are set according to
+the baseline economic environment described in Section 4.2 in the main text.
+Figure IA.8: Q-loss distribution in the environment with low noise trading risk (i.e., σu = 10−1)
+and significant presence of information-insensitive investors (i.e., ξ = 500).
+strategy exi(s) in state s as follows:
+Qi,loss(s) = Q∗
+i (s, x∗
+i (s)) −Q∗
+i (s, exi(s))
+Q∗
+i (s, x∗
+i (s))
+,
+(IA.4.17)
+which is referred to as the Q-loss. If exi(s) = x∗
+i (s), the resulting Q-loss would be zero, meaning
+that informed AI speculator i learned to play the optimal response to the rivals’ limit strategies
+in state s. For any non-optimal responses, the resulting Q-loss would be positive, with a larger
+magnitude reflecting more ineffective learning. In other words, the Q-loss reflects the deviation of
+limit strategies from those in a Nash equilibrium.
+We calculate the Q-loss along the equilibrium path for all Nsim = 1, 000 simulation sessions.
+Specifically, starting with an arbitrary state s0, we use the limit trading policies {exi(s)}I
+i=1 to
+simulate a sample path {st}T0+T
+t=1 , with sufficiently large T0 and T. The first T0 periods are dropped
+as burn-in. In our test, we set T0 = 100, 000 and T = 1, 000, 000. We further verify that setting
+larger values for T0 or T will not alter any results. For each informed AI speculator i = 1, ..., I
+and each period t = T0 + 1, ..., T0 + T, we compute the Q-loss using equation (IA.4.17). Then, we
+compute the simple average across all I informed AI speculators and T periods to obtain the
+Q-loss of each simulation session.
+Panel A of Figure IA.8 plots the distribution of the Q-losses across Nsim = 1, 000 simulation
+sessions in the environment with low noise trading risk (σu = 10−1) and significant presence of
+information-insensitive investors (i.e., ξ = 500). The largest and average Q-loss across all sessions
+are 0.38% and 0.27%, respectively, indicating that the AI speculators’ limit strategies are close to
+optimal strategies. We further decompose the Q-loss into the loss in contemporaneous profit and
+68
+
+
+=== OA PAGE 69 ===
+continuation value as follows:
+Pro f iti,loss(s) =E[πi,t|s, x∗
+i (s)] −E[πi,t|s, exi(s)]
+Q∗
+i (s, x∗
+i (s))
+,
+(IA.4.18)
+Cont_vali,loss(s) =ρE
+
+maxx′∈X Q∗
+i (s′, x′)
+s, x∗
+i (s)
+ −ρE
+
+maxx′∈X Q∗
+i (s′, x′)
+s, exi(s)
+
+Q∗
+i (s, x∗
+i (s))
+.
+(IA.4.19)
+Panels B and C of Figure IA.8 show that the loss in contemporaneous profit is positive, with
+an average value of 2.33%, whereas the loss in continuation value is negative, with an average
+value of −1.96%. This indicates that given the rivals playing their limit strategies, each informed
+AI speculator should act more aggressively when placing their trading orders. In this way, the
+contemporaneous profit would increase, which outweighs the decrease in continuation value
+(caused by rivals playing punishment strategies after a price trigger). In other words, the results
+in Figure IA.8 suggest that the punishment strategies learned by informed AI speculators are not
+sufficiently significant to rule out all profitable deviations.
+4.11
+Q-Learning Market Maker
+In the baseline economic environment, the market maker analyzes historical data to estimate the
+pricing rule. We now consider the market maker adopting Q-learning algorithms to learn the
+pricing rule. We find that all the results presented in the main text remain unchanged; they do
+not depend on whether the market maker determines the pricing rule using statistical learning or
+Q-learning algorithms.
+Below, we describe the Q-learning algorithm of the market maker. We consider the market
+maker adopting linear policies to price assets, given the combined order flow yt from informed
+speculators and the noise trader:
+pt = vMM
+t
++ λMM
+t
+yt,
+(IA.4.20)
+where vMM
+t
+and λMM
+t
+are the market maker’s decisions learned from its Q-learning algorithm.
+Specifically, the market maker’s state variable is st = ∅and action variables are at = {vMM
+t
+, λMM
+t
+} ∈
+V × Λ. The market maker updates its Q-matrix according to the following learning equation:
+bQMM
+t+1 (vMM
+t
+, λMM
+t
+) =(1 −αMM) bQMM
+t
+(st, at) + α
+
+(yt −ξ(vMM
+t
+−v + λMM
+t
+yt))2
++θ(vMM
+t
++ λMM
+t
+yt −vt)2 + ρMM
+min
+v′∈V,λ′∈Λ
+bQMM
+t
+(v′, λ′)
+
+,
+(IA.4.21)
+where the reward in period t is
+(yt + zt)2 + θ(pt −vt)2 =(yt −ξ(pt −v))2 + θ(pt −vt)2
+=(yt −ξ(vMM
+t
+−v + λMM
+t
+yt))2 + θ(vMM
+t
++ λMM
+t
+yt −vt)2.
+(IA.4.22)
+69
+
+
+=== OA PAGE 70 ===
+The optimal choices of vMM
+t
+and λMM
+t
+are learned to minimize the Q-matrix. Similar to informed AI
+speculators’ Q-learning algorithms, the market maker also conducts exploration with probability
+εMM
+t
+and exploitation with probability 1 −εMM
+t
+. In the exploration mode, the market maker
+randomly chooses actions v and λ over the set V × Λ.
+To implement the Q-learning algorithm for the market maker, we construct discrete grids
+for vMM
+t
+and λMM
+t
+. Specifically, we discretize the intervals [(1 −κ)vMM, (1 + κ)vMM] and [(1 −
+κ)λMM, (1 + κ)λMM] into nv and nλ equally spaced grid points, i.e., V = {vMM
+1
+, ..., vMM
+nv
+} and
+Λ = {λMM
+1
+, ..., λMM
+nλ }. The parameters vMM and λMM correspond to the optimal values in the
+theoretical benchmark of the noncollusive equilibrium. The parameter κ > 0 ensures that the
+values of vt and λt chosen by the market maker can be different from the theoretical values, vMM
+and λMM.
+For grid (vMM
+k
+, λMM
+j
+) ∈V × Λ, we initialize the market maker’s Q-matrix as follows:
+bQMM
+0
+(vMM
+k
+, λMM
+j
+) =
+1
+1 −ρMM E
+h
+(yt −ξ(vMM
+k
+−v + λMM
+j
+yt))2 + θ(vMM
+k
++ λMM
+j
+yt −vt)2i
+Substituting out yt = IχN(vt −v) + ut, we obtain
+bQMM
+0
+(vMM
+k
+, λMM
+j
+) =
+1
+1 −ρMM
+h
+(1 −ξλMM
+j
+)2((IχNσv)2 + σ2
+u) + ξ2(vMM
+k
+−v)2i
++
+θ
+1 −ρMM
+h
+(vMM
+k
+−v)2 + (λMM
+j
+IχN −1)2σ2
+v + (λMM
+j
+σu)2i
+The exploration rate is εMM
+t
+= e−βMMt. We set the parameters at βMM = 10−4, αMM = 0.1,
+ρMM = 0.95, κ = 0.5, and nv = nλ = 31. The results are similar if we choose different parameter
+values.
+4.12
+Hyperparameters
+Hyperparameters α and β.
+The behavior of Q-learning algorithms is governed by two key
+hyperparameters: α, which controls the forgetting rate, and β, which determines the rate at which
+exploration decays over time. Panels A and B of Figure IA.9 show the average ∆C for varying α
+and β in environments with low (σu = 10−1) and high (σu = 102) noise trading risks, respectively.
+In Panel A, where AI collusive equilibrium through price-trigger strategies prevails, the collusive
+trading profitability ∆C remains robustly high across hyperparameter combinations but peaks
+along the diagonal line. This suggests that efficient learning to achieve AI collusive equilibrium
+through price-trigger strategies requires striking a balance between α (the forgetting rate) and
+β (the exploration decay rate), which ensures the effectiveness of the exploration-exploitation
+tradeoff in figuring out the optimal trading strategies. In other words, efficient learning cannot be
+obtained by tuning an individual hyperparameter value of α or β.
+In Panel B, where AI collusive equilibrium through over-pruning bias in learning prevails, the
+70
+
+
+=== OA PAGE 71 ===
+0.4
+0.3
+0.7
+0.6
+0.3
+0.3
+0.7
+0.3
+0.3
+0.7
+0.3
+0.3
+0.8
+0.4
+0.2
+0.2
+0.8
+0.8
+0.9
+0.9
+0.7
+0.8
+0.9
+0.8
+0.5
+0.7
+0.6
+0.5
+0.2
+0.1
+0.1
+0.1
+0
+0.2
+0.4
+0.6
+0.8
+1
+Note: Panel A shows ∆C in an environment with low noise trading risk (σu = 10−1), while Panel B displays ∆C in an
+environment with high noise trading risk (σu = 102). All other parameters follow the baseline economic environment
+described in Section 4.2.
+Figure IA.9: Implications of hyperparameters α and β on ∆C.
+collusive trading profitability ∆C remains robustly high across hyperparameter combinations, as
+long as α is not very close to zero. Importantly, for a fixed α, the exploration decay rate β has little
+impact on the average collusive trading profit. In contrast, for a fixed β, the average trading profit
+∆C increases with α. This occurs because a higher α amplifies the over-pruning bias, reducing the
+algorithm’s learning efficiency and reinforcing collusive behavior through this bias.
+Heterogeneous Forgetting Rates (α1 and α2).
+The algorithm with a lower α exhibits smaller
+learning biases but requires more time and computational resources for training. In this context, α
+can be interpreted as the “intelligence level” of the algorithm: a lower α indicates a more advanced
+algorithm capable of more accurate learning.
+This subsection conducts simulation experiments within the baseline economic environment
+using standard Q-learning algorithms with heterogeneous, fixed values of α. In Online Appendix
+4.13, we extend this approach by introducing a two-tier Q-learning algorithm with an adaptive
+α, a form of Meta Q-learning. This extension enables informed AI speculators to learn not only
+the trading strategies corresponding to a given α but also the optimal α values themselves. Our
+results reveal that informed AI speculators using two-tier Q-learning algorithms can strategically
+coordinate their choices of α at high levels (i.e., low “intelligence levels”) to maximize collective
+benefits. Notably, the intuition behind the tacit collusion on α observed in two-tier Meta Q-learning
+algorithms is already evident in the simulation experiments with heterogeneous, fixed α values
+presented here.
+Focusing on the baseline calibration, we allow the two informed AI speculators to employ
+Q-learning algorithms with varying intelligence levels, represented by distinct values of α. Specif-
+ically, each informed AI speculator i adopts an algorithm whose forgetting rate is αi, with
+71
+
+
+=== OA PAGE 72 ===
+0.6
+0.7
+0.3
+0.3
+0.6
+0.7
+0.3
+0.3
+0.5
+0.7
+0.8
+0.7
+0.4
+0.5
+0.5
+0.5
+0.5
+0.7
+0.3
+0.3
+0.5
+0.8
+0.3
+0.3
+0.5
+0.7
+0.7
+0.7
+0.4
+0.5
+0.6
+0.6
+0
+0.2
+0.4
+0.6
+0.8
+1
+Note: Panels A and B show ∆C
+1 and ∆C
+2 , respectively, in the baseline environment with σu = 10−1.
+Figure IA.10: The Impact of heterogeneous α1 and α2 on ∆C when σu = 10−1.
+αi = 0.001, 0.01, 0.05 and 0.1 for i = 1, 2. Panels A and B of Figure IA.10 plot the average ∆C
+1
+and ∆C
+2 for informed AI speculators 1 and 2, respectively, in the environment with low noise
+trading risks (i.e., σu = 10−1). Below, we highlight several key insights that emerge from these
+results. First, the substantial average collusive trading profits sustained by price-trigger strategies
+remain remarkably robust, even in the presence of significant heterogeneity in the algorithms
+adopted by informed AI speculators. Second, adopting algorithms with overly low intelligence
+levels, such as (α1, α2) = (0.001, 0.001), is suboptimal. Obviously, both speculators achieve sig-
+nificantly higher profits when using (α1, α2) = (0.01, 0.01) compared to employing algorithms
+with higher intelligence levels, such as (α1, α2) = (0.001, 0.001). This echos a key observation of
+Figure IA.9 — efficient learning to achieve AI collusive equilibrium through price-trigger strategies
+requires striking a balance between α and β, rather than solely tuning one hyperparameter value.
+In the experiments of Figure IA.10, the value of β is fixed at its baseline calibration level (i.e.,
+β = 5 × 10−7), and α = 0.001 appears too low and fail to achieve the necessary balance with β,
+resulting in inefficient learning. Third, adopting algorithms with overly low intelligence levels,
+such as (α1, α2) = (0.05, 0.05) or (α1, α2) = (0.1, 0.1), is also suboptimal. With β = 5 × 10−7, these
+values of α fail to achieve the necessary balance between α and β, leading to inefficient learning,
+as shown in Panel A of Figure IA.9.
+Panels A and B of Figure IA.11 plot the average ∆C
+1 and ∆C
+2 for informed AI speculators 1
+and 2, respectively, in the environment with high noise trading risks (i.e., σu = 102). Several key
+insights emerge from these results. First, as in Figure IA.10, the substantial average collusive
+trading profits sustained by over-pruning bias in learning remain remarkably robust, even with
+significant heterogeneity in the algorithms adopted by informed AI speculators. Second, the
+patterns in Figure IA.11 fundamentally differ from those in Figure IA.10, further highlighting
+the distinction between the underlying mechanisms driving AI collusive equilibrium under high
+72
+
+
+=== OA PAGE 73 ===
+0.1
+0.5
+0.7
+0.8
+0.2
+0.6
+0.8
+0.8
+0.2
+0.7
+0.9
+1.1
+0.2
+0.8
+0.9
+1.2
+1.2
+1.1
+0.8
+0.8
+0.9
+0.9
+0.8
+0.7
+0.8
+0.7
+0.6
+0.5
+0.2
+0.2
+0.2
+0.1
+0
+0.2
+0.4
+0.6
+0.8
+1
+Note: Panels A and B show ∆C
+1 and ∆C
+2 , respectively, in the baseline environment with σu = 102.
+Figure IA.11: The Impact of heterogeneous α1 and α2 on ∆C when σu = 102.
+versus low noise trading risk scenarios. Third, an informed AI speculator has a strong incentive
+to adopt an algorithm with a high intelligence level (i.e., low α) when the other speculator uses
+an algorithm with a low intelligence level (i.e., high α). Importantly, however, both speculators
+achieve significantly higher profits when using (α1, α2) such that αi ≥0.01 for i = 1, 2 compared
+to employing algorithms with higher intelligence levels, such as (α1, α2) = (0.001, 0.001).
+The simulation findings on the strong potential for coordination at high levels of α (i.e., low
+intelligence levels) among informed AI speculators are fundamentally consistent with the general
+equilibrium effects in active management described by Stambaugh (2020). His model shows
+that when all managers lack the ability to select positive-alpha stocks, collective profits remain
+high. However, as a small fraction of managers gains skill, their profits rise at the expense of
+less skilled managers. If many managers become skilled, profits for all of them would decline
+due to strengthened price corrections and the resulting reduced alpha. Similarly, Dugast and
+Foucault (2024) find that improved manager skills, driven by lower information costs or new
+datasets, reduce average performance as asset prices become more informative.
+4.13
+Two-Tier Meta Q-Learning Algorithms
+Algorithms.
+Each informed AI speculator i employs a two-tier Meta Q-learning algorithm. In
+the lower tier, the speculator updates the Q-function bQi,t(st, xi,t), where st = {pt−1, vt−1, vt} is the
+state and xi,t is the order flow, using a Q-learning algorithm with an adaptive forgetting rate αi,t.
+The lower-tier algorithm follows the structure in Section 4.1 in the main text, with the addition
+of the adaptive αi,t. In the upper tier, the speculator learns the Q-function bQu
+i,t(su
+i,t, αi,t), where su
+i,t
+is the state and αi,t is the chosen forgetting rate, optimizing it to improve the lower-tier learning
+process.
+To ensure profits stabilize for any given αi,t in the upper tier, the lower-tier Q-learning algorithm
+73
+
+
+=== OA PAGE 74 ===
+runs for an extended period. Consequently, updates to αi,t occur less frequently than updates to
+xi,t in the lower tier. Specifically, each informed AI speculator i adjusts αi,t only after completing
+a lower-tier training epoch of T periods, where T is a large integer. Let τ = 1, 2, ... denote these
+training epochs, with epoch τ spanning periods (τ −1)T + 1 to τT. Within each training epoch
+τ, the upper-tier Q-function bQu
+i,t(su
+i,t, αi,t) and action αi,t for each informed AI speculator i remain
+fixed from (τ −1)T + 1 to τT −1. Updates to bQu
+i,t(su
+i,t, αi,t) and αi,t occur only at the end of the
+epoch, at t = τT. The updated choice of αi,τT follows the standard exploration-exploitation
+procedure.
+The recursive learning equation for the upper-tier Q-learning algorithm, updated at the end of
+each epoch τ, is specified as follows:
+bQu
+i,(τ+1)T(su
+i,τT, αi,τT) = (1 −αu) bQu
+i,τT(su
+i,τT, αi,τT) + αu
+
+πu
+i,τT + ρu max
+α′∈A
+bQu
+i,τT(su
+i,(τ+1)T, α′)
+
+,
+(IA.4.23)
+for τ = 1, 2, .... In equation (IA.4.23), πu
+i,τT is the reward in the training epoch τ, given by
+πu
+i,τT =
+1
+T ∑τT
+t=(τ−1)T+1(vt −pt)xi,t, which is the average trading profit over the last T periods,
+from (τ −1)T + 1 to τT. The parameters αu and ρu are the forgetting rate and the subjective
+discount rate for the upper tier Q-learning algorithm. For tractability, we choose the state variable
+su
+i,τT = {πu
+i,(τ−1)T}, which is the reward in the previous training epoch. The choice of αi,τT is made
+as follows:
+αi,τT =
+(
+argmaxα′∈A bQh
+i,τT(su
+i,τT, α′),
+with prob. 1 −εu
+τ,
+(exploitation)
+eα ∼uniform distribution on A,
+with prob. εu
+τ.
+(exploration)
+(IA.4.24)
+The exploration rate is specified as ετ = e−βuτ, where βu is the parameter governing the decaying
+speed of exploration rates across training epochs.
+Simulation Results.
+The two-tier Q-learning algorithm takes a substantially longer time to
+converge because there are experimentations on both αi,t and xi,t. For the upper-tier algorithm,
+we consider the following parameter values: αu = 0.05, βu = 10−4, and ρu = 0.95. Each training
+epoch has a total of T = 10, 000, 000 periods. The convergence criterion requires the decisions of
+αi,t to stay unchanged for 100, 000 consecutive training epochs. For tractability, we choose three
+grids for the choice of αi,t, with A = {0.001, 0.01, 0.1}. The parameters and grids for the lower-tier
+Q-learning algorithm are similar to those described in Section 4 in the main text.
+Table IA.I summarizes the number of simulation sessions that converge to each pair of (α1, α2)
+after algorithms converge. In the environment with low noise trading risk (i.e., σu = 10−1), across
+the Nsim = 1, 000 simulations sessions, 90.7% of the sessions converge to the best equilibrium with
+(α1, α2) = (0.01, 0.01), which maximizes both informed AI speculators’ profits. The remaining
+9.3% of the sessions converge to either (α1, α2) = (0.1, 0.01) or (α1, α2) = (0.01, 0.1), which yield
+similar profits for informed AI speculators compared with (α1, α2) = (0.01, 0.01), as shown in
+74
+
+
+=== OA PAGE 75 ===
+Table IA.I: Adaptive forgetting rates after the convergence of two-tier Q-learning algorithms.
+Low noise trading risk (i.e., σu = 10−1)
+High noise trading risk (i.e., σu = 102)
+(0.1, 0.1)
+0
+0.028
+(0.1, 0.01) or (0.01, 0.1)
+0.093
+0.194
+(0.01, 0.01)
+0.907
+0.716
+(0.001, 0.001)
+0
+0.002
+Others
+0
+0.06
+Note: This table reports the proportion of the Nsim = 1, 000 independent simulation sessions that converge to each
+pair of (α1, α2) after the two-tier Q-learning algorithms converge.
+Figure IA.10 in the main text. These results suggest that our two-tier Q-learning algorithm enables
+the two informed AI speculators to learn to play the optimal equilibrium.
+Turning to the environment with high noise trading risk (i.e., σu = 102). As shown in Figure
+IA.11 in the main text, the two informed AI speculators face a situation that resembles the
+prisoner’s dilemma. Specifically, given informed AI speculator i’s choice of αi, informed AI
+speculator j can gain by adopting the smallest αj = 0.001. However, both informed AI speculators
+would not make much profit if they reach the unqiue Nash equilibrium of (α1, α2) = (0.001, 0.001)
+of a one-shot game. Instead, both of them would attain supra-competitive profits if neither
+informed AI speculator adopts a forgetting rate of 0.001, that is, when both informed AI speculators
+adopt unadvanced algorithms to trade. In theory, the equilibria with high values of α can only be
+sustained in a repeated game. In our simulation experiments, we find that across the Nsim = 1, 000
+simulations sessions, 2.8% of the sessions converge to the equilibrium with (α1, α2) = (0.1, 0.1),
+19.4% of the sessions converge to either (α1, α2) = (0.1, 0.01) or (α1, α2) = (0.01, 0.1), and 71.6%
+of the sessions converge to the equilibrium with (α1, α2) = (0.01, 0.01). There are only 0.2% of
+the sessions converging to the equilibrium with (α1, α2) = (0.001, 0.001), even though this is the
+unique Nash equilibrium in a one-shot game.11 Our results indicate that in the environment
+with high noise trading risk, the two informed AI speculators are able to learn to adopt less
+advanced algorithms (i.e., high α), as if they are implicitly coordinating with each other. This sort
+of coordination allows both informed AI speculators to obtain supra-competitive profits.
+References
+Abada, Ibrahim, and Xavier Lambin. 2023. “Artificial Intelligence: Can Seemingly Collusive Outcomes Be Avoided?”
+Management Science, 69(9): 5042–5065.
+Abreu, Dilip, David Pearce, and Ennio Stacchetti. 1986. “Optimal Cartel Equilibria with Imperfect Monitoring.”
+Journal of Economic Theory, 39(1): 251–269.
+Asker, John, Chaim Fershtman, and Ariel Pakes. 2024. “The Impact of Artificial Intelligence Design on Pricing.”
+Journal of Economics & Management Strategy, 33(2): 276–304.
+11Complementary to this result, we also find that if one informed AI speculator’s α is exogenously fixed at 0.001, the
+other informed AI speculator will always learn to set its α at 0.001. This implies that although a unilateral deviation
+by setting α = 0.001 could boost self-profit in the short run, it will not be profitable in the long run because the peer
+informed AI speculator will also learn to set α = 0.001.
+75
+
+
+=== OA PAGE 76 ===
+Azar, Mohammad Gheshlaghi, Remi Munos, Mohammad Ghavamzadeh, and Hilbert J. Kappen. 2011. “Speedy
+Q-Learning.” International Conference on Neural Information Processing Systems (NIPS), 2411 – 2419.
+Banchio, Martino, and Giacomo Mantegazza. 2024. “Artificial Intelligence and Spontaneous Collusion.” Working
+papers.
+Brown, Zach Y., and Alexander MacKay. 2023. “Competition in Pricing Algorithms.” American Economic Journal:
+Microeconomics, 15(2): 109–156.
+Calvano, Emilio, Giacomo Calzolari, Vincenzo Denicoló, and Sergio Pastorello. 2020. “Artificial Intelligence,
+Algorithmic Pricing, and Collusion.” American Economic Review, 110(10): 3267–3297.
+Cartea, Álvaro, Patrick Chang, José Penalva, and Harrison Waldon. 2022. “The Algorithmic Learning Equations:
+Evolving Strategies in Dynamic Games.” Working papers.
+Dolgopolov, Arthur. 2024. “Reinforcement Learning in a Prisoner’s Dilemma.” Games and Economic Behavior, 144(C): 84–
+103.
+Dou, Winston Wei, David Pollard, and Harrison H. Zhou. 2012. “Estimation in Functional Regression for General
+Exponential Families.” The Annals of Statistics, 40(5): 2421–2451.
+Dou, Winston Wei, Itay Goldstein, and Yan Ji. 2024. “AI-Powered Trading, Algorithmic Collusion, and Price
+Efficiency.” University of Pennsylvania Working Papers.
+Dou, Winston Wei, Wei Wang, and Wenyu Wang. 2023. “The Cost of Intermediary Market Power for Distressed
+Borrowers.” Working papers.
+Dou, Winston Wei, Yan Ji, and Wei Wu. 2021a. “Competition, Profitability, and Discount Rates.” Journal of Financial
+Economcis, 140(2): 582–620.
+Dou, Winston Wei, Yan Ji, and Wei Wu. 2021b. “The Oligopoly Lucas Tree.” Review of Financial Studies, 35(8): 3867–
+3921.
+Dugast, Jérôme, and Thierry Foucault. 2024. “Equilibrium Data Mining and Data Abundance.” Journal of Finance,
+80(1): 211–258.
+Fershtman, Chaim, and Ariel Pakes. 2012. “Dynamic Games with Asymmetric Information: A Framework for
+Empirical Work.” Quarterly Journal of Economics, 127(4): 1611–1661.
+Fudenberg, Drew, and Eric Maskin. 1986. “The Folk Theorem in Repeated Games with Discounting or with
+Incomplete Information.” Econometrica, 54(3): 533–54.
+Goldstein, Itay, Emre Ozdenoren, and Kathy Yuan. 2013. “Trading Frenzies and Their Impact on Real Investment.”
+Journal of Financial Economics, 109(2): 566–582.
+Graham, Benjamin. 1973. The Intelligent Investor. . 4 ed., Publisher: Harper & Row, New York, NY.
+Green, Edward J, and Robert H Porter. 1984. “Noncooperative Collusion under Imperfect Price Information.”
+Econometrica, 52(1): 87–100.
+Greenwood, Robin, and Dimitri Vayanos. 2014. “Bond Supply and Excess Bond Returns.” Review of Financial Studies,
+27(3): 663–713.
+Greenwood, Robin, Samuel Hanson, Jeremy C Stein, and Adi Sunderam. 2023. “A Quantity-Driven Theory of Term
+Premia and Exchange Rates.” Quarterly Journal of Economics, 138(4): 2327–2389.
+Gu, Shixiang, Timothy Lillicrap, Ilya Sutskever, and Sergey Levine. 2016. “Continuous deep Q-learning with
+model-based acceleration.” International Conference on International Conference on Machine Learning (ICML), 48: 2829 –
+2838.
+Hall, Peter, and Joel L. Horowitz. 2007. “Methodology and convergence rates for functional linear regression.” The
+Annals of Statistics, 35(1): 70 – 91.
+Hansen, Karsten T., Kanishka Misra, and Mallesh M. Pai. 2021. “Algorithmic Collusion: Supra-Competitive Prices
+via Independent Algorithms.” Marketing Science, 40(1): 1–12.
+Hastie, Trevor, Robert Tibshirani, and Jerome Friedman. 2009. The elements of statistical learning: data mining, inference
+and prediction. . 2 ed., Springer.
+Hellwig, Christian, Arijit Mukherji, and Aleh Tsyvinski. 2006. “Self-Fulfilling Currency Crises: The Role of Interest
+Rates.” American Economic Review, 96(5): 1769–1787.
+Johnson, Justin Pappas, Andrew Rhodes, and Matthijs Wildenbeest. 2023. “Platform Design when Sellers Use
+Pricing Algorithms.” Econometrica, 91(5): 1841–1879.
+Kearns, Michael, and Daphne Koller. 1999. “Efficient reinforcement learning in factored MDPs.” International Joint
+Conferences on Artificial Intelligence (IJCAI), 2: 740–747.
+Kearns, Michael, and Satinder Singh. 2002. “Near-Optimal Reinforcement Learning in Polynomial Time.” Machine
+Learning, 49: 209–232.
+76
+
+
+=== OA PAGE 77 ===
+Klein, Timo. 2021. “Autonomous algorithmic collusion: Q-learning under sequential pricing.” The RAND Journal of
+Economics, 52(3): 538–558.
+Kyle, Albert S. 1985. “Continuous Auctions and Insider Trading.” Econometrica, 53(6): 1315–1335.
+Kyle, Albert S., and Wei Xiong. 2001. “Contagion as a Wealth Effect.” Journal of Finance, 56(4): 1401–1440.
+Lambin, Xavier. 2024. “Less than Meets the Eye: Simultaneous Experiments as a Source of Algorithmic Seeming
+Collusion.” Working papers.
+Mildenstein, Eckart, and Harold Schleef. 1983. “The Optimal Pricing Policy of a Monopolistic Marketmaker in the
+Equity Market.” Journal of Finance, 38(1): 218–231.
+Opp, Marcus M., Christine A. Parlour, and Johan Walden. 2014. “Markup Cycles, Dynamic Misallocation, and
+Amplification.” Journal of Economic Theory, 154: 126–161.
+Possnig, Clemens. 2024. “Reinforcement Learning and Collusion.” Working papers.
+Rotemberg, Julio J, and Garth Saloner. 1986. “A Supergame-Theoretic Model of Price Wars during Booms.” American
+Economic Review, 76(3): 390–407.
+Senda, Kei, Shinji Fujii, and Syusuke Mano. 2006. “Acceleration of Reinforcement Learning by Using State Transition
+Probability Model.”
+Stambaugh, Robert F. 2020. “Skill and Profit in Active Management.”
+Sutton, Richard S. 1991. “Dyna, an integrated architecture for learning, planning, and reacting.” ACM SIGART
+Bulletin, 2(4): 160 – 163.
+Vayanos, Dimitri, and Jean-Luc Vila. 2021. “A Preferred-Habitat Model of the Term Structure of Interest Rates.”
+Econometrica, 89(1): 77–112.
+Waltman, Ludo, and Uzay Kaymak. 2008. “Q-learning Agents in a Cournot Oligopoly Model.” Journal of Economic
+Dynamics and Control, 32(10): 3275–3293.
+77
+
+

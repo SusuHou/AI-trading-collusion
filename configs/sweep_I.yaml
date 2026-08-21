@@ -1,0 +1,28 @@
+# Fig. 7 sweep: number of speculators I = 2..9, at both sigma_u regimes.
+# 16 cells (row-major over I x sigma_u) x 100 tasks = Nsim 1000 sessions/cell.
+params:
+  vbar: 1.0
+  sigma_v: 1.0
+  xi: 500.0
+  theta: 0.1
+  rho: 0.95
+  alpha: 0.01
+  beta: 5.0e-7
+  iota: 0.1
+  nv: 10
+  nx: 15
+  np: 31
+  Tm: 10000
+
+sweep:
+  I: [2, 3, 4, 5, 6, 7, 8, 9]
+  sigma_u: [0.1, 100.0]
+
+run:
+  batch: 10
+  max_periods: 0
+  conv_streak: 1000000
+  eval_periods: 100000
+  chunk_size: 20000
+  freeze_on_convergence: true
+  mm_init: nash

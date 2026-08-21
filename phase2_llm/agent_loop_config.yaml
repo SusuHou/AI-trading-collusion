@@ -1,0 +1,11 @@
+# verl agent-loop registry entry (hydra instantiate list), referenced by
+# actor_rollout_ref.rollout.agent.agent_loop_config_path in
+# phase2_llm/grpo_config.yaml's verl overrides. Kwargs below are passed to
+# MarketSpeculatorAgentLoop.__init__ (see phase2_llm/verl_agent_loop.py).
+- name: market_speculator
+  _target_: phase2_llm.verl_agent_loop.MarketSpeculatorAgentLoop
+  params_config: configs/poc.yaml   # read-only env economics (same as Stage A)
+  sigma_u: 0.1                      # keep in sync with env.sigma_u in grpo_config.yaml
+  periods: 32
+  gamma: 1.0
+  history_len: 10
